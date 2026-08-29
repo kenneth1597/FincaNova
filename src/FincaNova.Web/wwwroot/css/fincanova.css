@@ -1,0 +1,150 @@
+/* ==========================================================================
+   FincaNova — sistema de diseño (DN01, sección "Datos de diseño")
+   ========================================================================== */
+:root {
+    --fn-primary: #2E7D32;
+    --fn-primary-dark: #1B5E20;
+    --fn-primary-light: #66BB6A;
+    --fn-brown: #6D4C41;
+    --fn-bg: #FFFFFF;
+    --fn-surface: #F5F7F5;
+    --fn-text: #333333;
+    --fn-muted: #6c757d;
+    --fn-border: #e2e6e2;
+    --fn-sidebar-width: 244px;
+    --fn-topbar-height: 56px;
+    font-family: "Segoe UI", "Segoe UI Web", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: var(--fn-surface);
+    color: var(--fn-text);
+    font-family: "Segoe UI", "Segoe UI Web", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+a { color: var(--fn-primary-dark); }
+
+/* ----- Botones ----- */
+.btn-primary {
+    --bs-btn-bg: var(--fn-primary);
+    --bs-btn-border-color: var(--fn-primary);
+    --bs-btn-hover-bg: var(--fn-primary-dark);
+    --bs-btn-hover-border-color: var(--fn-primary-dark);
+    --bs-btn-active-bg: var(--fn-primary-dark);
+    --bs-btn-active-border-color: var(--fn-primary-dark);
+    --bs-btn-disabled-bg: var(--fn-primary-light);
+    --bs-btn-disabled-border-color: var(--fn-primary-light);
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--fn-primary-dark);
+    --bs-btn-border-color: var(--fn-primary);
+    --bs-btn-hover-bg: var(--fn-primary);
+    --bs-btn-hover-border-color: var(--fn-primary);
+    --bs-btn-active-bg: var(--fn-primary-dark);
+}
+.text-primary { color: var(--fn-primary-dark) !important; }
+.bg-primary-subtle { background-color: #e8f5e9 !important; }
+
+/* ----- Layout de la aplicación ----- */
+.fn-shell { display: flex; min-height: 100vh; }
+
+.fn-sidebar {
+    width: var(--fn-sidebar-width);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--fn-primary-dark), var(--fn-primary));
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    z-index: 1040;
+    transition: transform .2s ease-in-out;
+}
+.fn-sidebar__brand {
+    display: flex; align-items: center; gap: .55rem;
+    padding: 1rem 1.15rem;
+    font-weight: 700; font-size: 1.15rem;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+}
+.fn-sidebar__brand i { font-size: 1.4rem; }
+.fn-sidebar__nav { padding: .75rem .6rem; overflow-y: auto; flex-grow: 1; }
+.fn-sidebar__section {
+    font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
+    opacity: .65; margin: .9rem .7rem .3rem;
+}
+.fn-sidebar__link {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .75rem; margin-bottom: .12rem;
+    border-radius: .5rem;
+    color: rgba(255,255,255,.88); text-decoration: none;
+    font-size: .93rem;
+}
+.fn-sidebar__link i { width: 1.1rem; text-align: center; font-size: 1rem; }
+.fn-sidebar__link:hover { background: rgba(255,255,255,.12); color: #fff; }
+.fn-sidebar__link.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 600; }
+
+.fn-main {
+    flex-grow: 1;
+    margin-left: var(--fn-sidebar-width);
+    display: flex; flex-direction: column; min-width: 0;
+}
+.fn-topbar {
+    height: var(--fn-topbar-height);
+    background: var(--fn-bg);
+    border-bottom: 1px solid var(--fn-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1rem;
+    position: sticky; top: 0; z-index: 1030;
+}
+.fn-topbar__toggle { display: none; background: none; border: 0; font-size: 1.4rem; color: var(--fn-text); }
+.fn-content { padding: 1.35rem; flex-grow: 1; }
+.fn-content > h1, .fn-page-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+
+.fn-card {
+    background: var(--fn-bg);
+    border: 1px solid var(--fn-border);
+    border-radius: .65rem;
+    padding: 1.15rem;
+}
+
+.fn-sidebar__backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 1039;
+}
+
+/* ----- Responsive: menú colapsa a hamburguesa < 768px (HU-51) ----- */
+@media (max-width: 767.98px) {
+    .fn-sidebar { transform: translateX(-100%); }
+    .fn-sidebar.is-open { transform: translateX(0); }
+    .fn-sidebar__backdrop.is-open { display: block; }
+    .fn-main { margin-left: 0; }
+    .fn-topbar__toggle { display: inline-flex; align-items: center; }
+}
+
+/* ----- Pantalla de autenticación ----- */
+.fn-auth {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--fn-primary-dark), var(--fn-primary-light));
+    padding: 1rem;
+}
+.fn-auth__card {
+    background: var(--fn-bg);
+    width: 100%; max-width: 400px;
+    border-radius: .9rem;
+    padding: 2rem 1.9rem;
+    box-shadow: 0 18px 45px rgba(0,0,0,.25);
+}
+.fn-auth__brand {
+    text-align: center; margin-bottom: 1.4rem;
+    color: var(--fn-primary-dark); font-weight: 700; font-size: 1.5rem;
+}
+.fn-auth__brand i { font-size: 2rem; display: block; margin-bottom: .3rem; }
+
+/* ----- Utilidades varias ----- */
+.fn-badge-estado { font-size: .75rem; font-weight: 600; }
+table.fn-table thead th { background: #eef3ee; color: var(--fn-primary-dark); border-bottom: 2px solid var(--fn-primary-light); }
+.footer-note { color: var(--fn-muted); font-size: .8rem; }

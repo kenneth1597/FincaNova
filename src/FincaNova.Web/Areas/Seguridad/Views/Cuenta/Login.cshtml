@@ -1,0 +1,44 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = "_LayoutAuth";
+}
+
+<p class="text-center text-muted mb-4">Ingrese sus credenciales para acceder a la finca.</p>
+
+<form asp-area="Seguridad" asp-controller="Cuenta" asp-action="Login" method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"
+         style="@(ViewData.ModelState.ErrorCount == 0 ? "display:none" : "")"></div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input asp-for="Email" class="form-control" autocomplete="username" autofocus placeholder="correo@ejemplo.com" />
+        </div>
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <span asp-validation-for="Password" class="text-danger small"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="Recordarme" class="form-check-input" />
+        <label asp-for="Recordarme" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
