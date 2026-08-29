@@ -1,6 +1,7 @@
 using FincaNova.Web.Data;
 using FincaNova.Web.Domain;
 using FincaNova.Web.Services.Auditoria;
+using FincaNova.Web.Services.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,10 @@ builder.Services
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+// El enlace de restablecimiento de contraseña vence a los 30 minutos (HU-43 esc. 4).
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+    o.TokenLifespan = TimeSpan.FromMinutes(30));
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Seguridad/Cuenta/Login";
@@ -64,6 +69,7 @@ builder.Services.AddAuthorization(options =>
 
 // ----- Servicios de la aplicación -----
 builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddScoped<IEmailSender, FileEmailSender>();
 
 var app = builder.Build();
 

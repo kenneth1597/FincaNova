@@ -1,0 +1,129 @@
+@model AuditoriaFiltroViewModel
+@{
+    ViewData["Title"] = "Bitácora de auditoría";
+
+    string AccionTexto(AccionAuditoria a) => a switch
+    {
+        AccionAuditoria.InicioSesion => "Inicio de sesión",
+        AccionAuditoria.CierreSesion => "Cierre de sesión",
+        AccionAuditoria.Crear => "Creación",
+        AccionAuditoria.Modificar => "Modificación",
+        AccionAuditoria.Eliminar => "Eliminación",
+        AccionAuditoria.Inactivar => "Inactivación",
+        AccionAuditoria.Activar => "Activación",
+        _ => a.ToString()
+    };
+    string AccionColor(AccionAuditoria a) => a switch
+    {
+        AccionAuditoria.Crear or AccionAuditoria.Activar => "success",
+        AccionAuditoria.Eliminar or AccionAuditoria.Inactivar => "danger",
+        AccionAuditoria.Modificar => "primary",
+        _ => "secondary"
+    };
+    var r = Model.Resultados;
+}
+
+<h1 class="fn-page-title">Bitácora de auditoría</h1>
+<p class="text-muted">Registro inmodificable de las operaciones críticas del sistema (RQNF-013).</p>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="Desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="Hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Usuario</label>
+            <input type="text" name="Usuario" value="@Model.Usuario" class="form-control" placeholder="correo o nombre" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Entidad</label>
+            <select name="Entidad" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var e in Model.EntidadesDisponibles)
+                {
+                    <option value="@e" selected="@(Model.Entidad == e)">@e</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Acción</label>
+            <select name="Accion" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var a in Enum.GetValues<AccionAuditoria>())
+                {
+                    <option value="@((int)a)" selected="@(Model.Accion == a)">@AccionTexto(a)</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-1 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha/Hora</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Entidad</th>
+                    <th>Detalle</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (r.Items.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">Sin registros para los filtros seleccionados.</td></tr>
+            }
+            @foreach (var log in r.Items)
+            {
+                <tr>
+                    <td class="text-nowrap">@log.FechaHora.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>@(log.Usuario ?? "—")</td>
+                    <td><span class="badge bg-@AccionColor(log.Accion) fn-badge-estado">@AccionTexto(log.Accion)</span></td>
+                    <td>@log.Entidad @(string.IsNullOrEmpty(log.EntidadId) ? "" : $"#{log.EntidadId}")</td>
+                    <td class="small">@log.Descripcion</td>
+                    <td class="small text-muted">@log.DireccionIp</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (r.TotalPaginas > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item @(r.TieneAnterior ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-all-route-data="@RouteConFiltros(Model, r.Pagina - 1)">Anterior</a>
+            </li>
+            <li class="page-item disabled"><span class="page-link">Página @r.Pagina de @r.TotalPaginas</span></li>
+            <li class="page-item @(r.TieneSiguiente ? "" : "disabled")">
+                <a class="page-link" asp-action="Index" asp-all-route-data="@RouteConFiltros(Model, r.Pagina + 1)">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+}
+
+@functions {
+    static Dictionary<string, string> RouteConFiltros(AuditoriaFiltroViewModel m, int pagina)
+    {
+        var d = new Dictionary<string, string> { ["Pagina"] = pagina.ToString() };
+        if (m.Desde is { } de) d["Desde"] = de.ToString("yyyy-MM-dd");
+        if (m.Hasta is { } ha) d["Hasta"] = ha.ToString("yyyy-MM-dd");
+        if (!string.IsNullOrWhiteSpace(m.Usuario)) d["Usuario"] = m.Usuario!;
+        if (!string.IsNullOrWhiteSpace(m.Entidad)) d["Entidad"] = m.Entidad!;
+        if (m.Accion is { } ac) d["Accion"] = ((int)ac).ToString();
+        return d;
+    }
+}

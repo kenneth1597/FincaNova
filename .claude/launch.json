@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "FincaNova.Web",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "src/FincaNova.Web", "--no-launch-profile", "--urls", "http://localhost:5188"],
+      "port": 5188,
+      "url": "http://localhost:5188"
+    }
+  ]
+}

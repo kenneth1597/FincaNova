@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Documentación funcional del proyecto (no se versiona el binario de Office aquí)
 # — se conserva localmente en OneDrive_1_29-8-2026/
+
+# Correos simulados en desarrollo (FileEmailSender)
+src/FincaNova.Web/App_Data/

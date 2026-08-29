@@ -1,0 +1,31 @@
+@model EsqueciMiContrasenaViewModel
+@{
+    ViewData["Title"] = "Recuperar contraseña";
+    Layout = "_LayoutAuth";
+}
+
+<p class="text-center text-muted mb-4">
+    Ingrese el correo de su cuenta y le enviaremos un enlace para definir una nueva contraseña.
+</p>
+
+<form asp-action="EsqueciMiContrasena" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input asp-for="Email" class="form-control" autofocus placeholder="correo@ejemplo.com" />
+        </div>
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-send"></i> Enviar enlace
+    </button>
+    <a asp-action="Login" class="btn btn-link w-100 mt-2">Volver al inicio de sesión</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

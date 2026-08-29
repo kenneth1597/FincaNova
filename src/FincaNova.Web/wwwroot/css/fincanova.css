@@ -25,7 +25,7 @@ body {
 
 a { color: var(--fn-primary-dark); }
 
-/* ----- Botones ----- */
+/* ----- Botones (compatibles con Bootstrap 5.1+) ----- */
 .btn-primary {
     --bs-btn-bg: var(--fn-primary);
     --bs-btn-border-color: var(--fn-primary);
@@ -35,6 +35,20 @@ a { color: var(--fn-primary-dark); }
     --bs-btn-active-border-color: var(--fn-primary-dark);
     --bs-btn-disabled-bg: var(--fn-primary-light);
     --bs-btn-disabled-border-color: var(--fn-primary-light);
+    background-color: var(--fn-primary);
+    border-color: var(--fn-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+    background-color: var(--fn-primary-dark) !important;
+    border-color: var(--fn-primary-dark) !important;
+}
+.btn-primary:disabled,
+.btn-primary.disabled {
+    background-color: var(--fn-primary-light);
+    border-color: var(--fn-primary-light);
 }
 .btn-outline-primary {
     --bs-btn-color: var(--fn-primary-dark);
@@ -42,9 +56,22 @@ a { color: var(--fn-primary-dark); }
     --bs-btn-hover-bg: var(--fn-primary);
     --bs-btn-hover-border-color: var(--fn-primary);
     --bs-btn-active-bg: var(--fn-primary-dark);
+    color: var(--fn-primary-dark);
+    border-color: var(--fn-primary);
 }
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+    background-color: var(--fn-primary) !important;
+    border-color: var(--fn-primary) !important;
+    color: #fff !important;
+}
+.btn-check:checked + .btn-outline-primary { background-color: var(--fn-primary); border-color: var(--fn-primary); color: #fff; }
+a { color: var(--fn-primary-dark); }
 .text-primary { color: var(--fn-primary-dark) !important; }
 .bg-primary-subtle { background-color: #e8f5e9 !important; }
+.form-check-input:checked { background-color: var(--fn-primary); border-color: var(--fn-primary); }
+.form-control:focus, .form-select:focus { border-color: var(--fn-primary-light); box-shadow: 0 0 0 .2rem rgba(102,187,106,.25); }
 
 /* ----- Layout de la aplicación ----- */
 .fn-shell { display: flex; min-height: 100vh; }

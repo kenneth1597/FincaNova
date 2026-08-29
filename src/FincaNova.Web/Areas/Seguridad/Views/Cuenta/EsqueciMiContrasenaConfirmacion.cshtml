@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Enlace enviado";
+    Layout = "_LayoutAuth";
+}
+
+<div class="text-center">
+    <i class="bi bi-envelope-check text-success" style="font-size:2.5rem"></i>
+    <p class="mt-3 mb-4">
+        Si el correo indicado corresponde a una cuenta activa, recibirá un mensaje con un enlace
+        para restablecer su contraseña. El enlace vence en 30 minutos.
+    </p>
+    <a asp-action="Login" class="btn btn-outline-primary w-100">Volver al inicio de sesión</a>
+</div>
