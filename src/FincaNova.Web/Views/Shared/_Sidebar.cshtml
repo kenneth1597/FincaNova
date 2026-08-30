@@ -56,6 +56,12 @@
         <a class="fn-sidebar__link @Active("Lotes", "Periodos")" asp-area="Lotes" asp-controller="Periodos" asp-action="Index">
             <i class="bi bi-calendar-range"></i> Períodos productivos
         </a>
+        @if (esGestion)
+        {
+            <a class="fn-sidebar__link @Active("", "Alertas")" asp-area="" asp-controller="Alertas" asp-action="Index">
+                <i class="bi bi-bell"></i> Alertas
+            </a>
+        }
         @if (esAdmin)
         {
             <a class="fn-sidebar__link @Active("Seguridad", "Usuarios")" asp-area="Seguridad" asp-controller="Usuarios" asp-action="Index">

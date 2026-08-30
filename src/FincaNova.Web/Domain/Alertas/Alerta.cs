@@ -14,8 +14,11 @@ public class Alerta : AuditableEntity
     [Required, StringLength(300)]
     public string Mensaje { get; set; } = string.Empty;
 
-    /// <summary>Id de la entidad relacionada (lote o insumo) según el tipo.</summary>
+    /// <summary>Id de la entidad principal relacionada: lote (enfermedad recurrente) o insumo (stock).</summary>
     public int? ReferenciaId { get; set; }
+
+    /// <summary>Id secundario: para enfermedad recurrente, el tipo de enfermedad.</summary>
+    public int? ReferenciaSecundariaId { get; set; }
 
     public DateTime FechaGeneracion { get; set; } = DateTime.UtcNow;
 

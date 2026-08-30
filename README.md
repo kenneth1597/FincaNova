@@ -93,6 +93,16 @@ src/FincaNova.Web/
     recolección se activa en el Hito 5).
   - Las labores aparecen en la bitácora del lote.
 - [ ] **Hito 4** — Control de enfermedades + tratamientos + alertas
+- [x] **Hito 4 — Control de enfermedades** *(commit `Hito 4`)*
+  - Registro de detecciones de enfermedad/plaga por lote (lote válido y activo,
+    validación de datos) y edición con estado de seguimiento.
+  - Tratamientos aplicados (acción, producto, dosis, fecha, resultado); al aplicar
+    el primero, el seguimiento pasa a «En tratamiento».
+  - Historial con filtros avanzados simultáneos: lote, tipo, estado, rango de fechas
+    y texto del tratamiento.
+  - Alerta automática de enfermedad recurrente cuando se supera el umbral configurado
+    dentro de la ventana de días, con dedupe y panel de alertas con «marcar atendida».
+  - Las detecciones aparecen en la bitácora del lote.
 - [ ] **Hito 5** — Recolección y producción + merma
 - [ ] **Hito 6** — Ingresos, gastos, inventario, reportes PDF/Excel
 - [ ] **Hito 7** — Dashboard de indicadores

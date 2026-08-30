@@ -1,0 +1,20 @@
+@model EnfermedadFormViewModel
+@{
+    ViewData["Title"] = "Editar detección";
+}
+
+<h1 class="fn-page-title"><i class="bi bi-pencil-square"></i> Editar detección de enfermedad</h1>
+
+<div class="fn-card" style="max-width:820px">
+    <form asp-action="Editar" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+        <input type="hidden" asp-for="Id" />
+        <partial name="_FormFields" model="Model" />
+        <div class="mt-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Guardar cambios</button>
+            <a asp-action="Detalle" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

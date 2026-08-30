@@ -1,0 +1,56 @@
+@model EnfermedadFormViewModel
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="LoteId" class="form-label"></label>
+        <select asp-for="LoteId" class="form-select">
+            <option value="">— Seleccione el lote afectado —</option>
+            @foreach (var (id, t) in Model.Lotes)
+            {
+                <option value="@id" selected="@(Model.LoteId == id)">@t</option>
+            }
+        </select>
+        <span asp-validation-for="LoteId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="TipoEnfermedadId" class="form-label"></label>
+        <select asp-for="TipoEnfermedadId" class="form-select">
+            <option value="">— Seleccione la enfermedad o plaga —</option>
+            @foreach (var (id, t) in Model.Tipos)
+            {
+                <option value="@id" selected="@(Model.TipoEnfermedadId == id)">@t</option>
+            }
+        </select>
+        <span asp-validation-for="TipoEnfermedadId" class="text-danger small"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="FechaDeteccion" class="form-label"></label>
+        <input asp-for="FechaDeteccion" class="form-control" type="date" />
+        <span asp-validation-for="FechaDeteccion" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="PeriodoProductivoId" class="form-label"></label>
+        <select asp-for="PeriodoProductivoId" class="form-select">
+            <option value="">Sin período</option>
+            @foreach (var (id, t) in Model.Periodos)
+            {
+                <option value="@id" selected="@(Model.PeriodoProductivoId == id)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Estado" class="form-label"></label>
+        <select asp-for="Estado" class="form-select">
+            @foreach (var e in Enum.GetValues<EstadoEnfermedad>())
+            {
+                <option value="@((int)e)" selected="@(Model.Estado == e)">@Ui.EstadoEnfermedadTexto(e)</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Sintomas" class="form-label"></label>
+        <textarea asp-for="Sintomas" class="form-control" rows="3" placeholder="Manchas, defoliación, perforación del fruto, zonas del lote afectadas…"></textarea>
+    </div>
+</div>

@@ -57,6 +57,10 @@ public class Tratamiento : AuditableEntity
     [Required, StringLength(300)]
     public string Descripcion { get; set; } = string.Empty;
 
+    /// <summary>Nombre del producto o insumo aplicado (texto libre mientras no exista inventario).</summary>
+    [StringLength(120)]
+    public string? ProductoTexto { get; set; }
+
     /// <summary>Insumo del inventario utilizado; si se indica, se rebaja el stock (HU-24).</summary>
     public int? InsumoId { get; set; }
 

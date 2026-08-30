@@ -38,4 +38,20 @@ public static class Ui
         ModalidadPago.PorCajuela => "Por cajuela",
         _ => m.ToString()
     };
+
+    public static string EstadoEnfermedadTexto(EstadoEnfermedad e) => e switch
+    {
+        EstadoEnfermedad.Detectada => "Detectada",
+        EstadoEnfermedad.EnTratamiento => "En tratamiento",
+        EstadoEnfermedad.Controlada => "Controlada",
+        _ => e.ToString()
+    };
+
+    public static string EstadoEnfermedadColor(EstadoEnfermedad e) => e switch
+    {
+        EstadoEnfermedad.Detectada => "danger",
+        EstadoEnfermedad.EnTratamiento => "warning",
+        EstadoEnfermedad.Controlada => "success",
+        _ => "secondary"
+    };
 }

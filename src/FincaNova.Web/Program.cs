@@ -1,5 +1,6 @@
 using FincaNova.Web.Data;
 using FincaNova.Web.Domain;
+using FincaNova.Web.Services.Alertas;
 using FincaNova.Web.Services.Auditoria;
 using FincaNova.Web.Services.Catalogos;
 using FincaNova.Web.Services.Email;
@@ -72,6 +73,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IEmailSender, FileEmailSender>();
 builder.Services.AddScoped<ICatalogoService, CatalogoService>();
+builder.Services.AddScoped<IAlertaService, AlertaService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,63 @@
+@using FincaNova.Web.Domain.Alertas
+@model IReadOnlyList<Alerta>
+@{
+    ViewData["Title"] = "Alertas";
+    var incluirAtendidas = (bool)ViewBag.IncluirAtendidas;
+
+    (string icono, string texto) Tipo(TipoAlerta t) => t switch
+    {
+        TipoAlerta.EnfermedadRecurrente => ("bi-bug", "Enfermedad recurrente"),
+        TipoAlerta.StockMinimo => ("bi-box-seam", "Stock mínimo"),
+        _ => ("bi-bell", t.ToString())
+    };
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-bell"></i> Alertas</h1>
+    <div class="btn-group">
+        <a class="btn btn-sm @(incluirAtendidas ? "btn-outline-primary" : "btn-primary")" asp-action="Index">Pendientes</a>
+        <a class="btn btn-sm @(incluirAtendidas ? "btn-primary" : "btn-outline-primary")" asp-action="Index" asp-route-incluirAtendidas="true">Todas</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="fn-card text-center text-muted py-4">
+        <i class="bi bi-check2-circle d-block fs-3 mb-1 text-success"></i>
+        No hay alertas @(incluirAtendidas ? "" : "pendientes").
+    </div>
+}
+else
+{
+    <div class="fn-card p-0">
+        <ul class="list-group list-group-flush">
+            @foreach (var a in Model)
+            {
+                var (icono, texto) = Tipo(a.Tipo);
+                <li class="list-group-item d-flex gap-3 align-items-start @(a.Atendida ? "opacity-75" : "")">
+                    <span class="fn-timeline__dot bg-@(a.Atendida ? "secondary" : "danger") flex-shrink-0" style="position:static;box-shadow:none">
+                        <i class="bi @icono"></i>
+                    </span>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <strong>@texto</strong>
+                            <span class="text-muted small">@a.FechaGeneracion.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div>@a.Mensaje</div>
+                        @if (a.Atendida)
+                        {
+                            <div class="text-muted small">Atendida por @a.AtendidaPor el @a.FechaAtencion?.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                        }
+                    </div>
+                    @if (!a.Atendida)
+                    {
+                        <form asp-action="MarcarAtendida" asp-route-id="@a.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i> Atendida</button>
+                        </form>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}

@@ -1,0 +1,121 @@
+@model EnfermedadDetalleViewModel
+@{
+    var r = Model.Registro;
+    ViewData["Title"] = Model.Enfermedad;
+    var puedeGestionar = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <div>
+        <h1 class="fn-page-title mb-1"><i class="bi bi-bug"></i> @Model.Enfermedad</h1>
+        <span class="badge bg-@Ui.EstadoEnfermedadColor(r.Estado) fn-badge-estado">@Ui.EstadoEnfermedadTexto(r.Estado)</span>
+        <span class="text-muted small">· @Model.Lote · detectada el @r.FechaDeteccion.ToString("dd/MM/yyyy")</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+        <a asp-action="Editar" asp-route-id="@r.Id" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+        @if (puedeGestionar)
+        {
+            <form asp-action="Eliminar" asp-route-id="@r.Id" method="post" class="d-inline"
+                  onsubmit="return confirm('¿Eliminar esta detección y sus tratamientos?');">
+                @Html.AntiForgeryToken()
+                <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (Model.AlertaRecurrencia)
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Enfermedad recurrente:</strong> «@Model.Enfermedad» se ha detectado @Model.DeteccionesEnVentana veces
+        en este lote dentro de la ventana de seguimiento. Se generó una alerta para el administrador.
+    </div>
+}
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Datos de la detección</h2>
+            <dl class="row mb-0 small">
+                <dt class="col-5">Lote</dt><dd class="col-7">@Model.Lote</dd>
+                <dt class="col-5">Fecha</dt><dd class="col-7">@r.FechaDeteccion.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-5">Período</dt><dd class="col-7">@(Model.Periodo ?? "—")</dd>
+                <dt class="col-5">Estado</dt><dd class="col-7">@Ui.EstadoEnfermedadTexto(r.Estado)</dd>
+            </dl>
+            @if (!string.IsNullOrEmpty(r.Sintomas))
+            {
+                <hr /><p class="small mb-0"><strong>Síntomas:</strong> @r.Sintomas</p>
+            }
+            @if (puedeGestionar)
+            {
+                <hr />
+                <form asp-action="CambiarEstado" method="post" class="d-flex gap-2 align-items-end">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@r.Id" />
+                    <div class="flex-grow-1">
+                        <label class="form-label small mb-0">Cambiar estado</label>
+                        <select name="estado" class="form-select form-select-sm">
+                            @foreach (var e in Enum.GetValues<EstadoEnfermedad>())
+                            {
+                                <option value="@((int)e)" selected="@(e == r.Estado)">@Ui.EstadoEnfermedadTexto(e)</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">Aplicar</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="fn-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 text-muted text-uppercase mb-0">Tratamientos aplicados (HU-08)</h2>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Tratamientos" asp-action="Crear" asp-route-registroId="@r.Id">
+                    <i class="bi bi-plus-lg"></i> Registrar tratamiento
+                </a>
+            </div>
+            @if (Model.Tratamientos.Count == 0)
+            {
+                <p class="text-muted small mb-0">Todavía no se ha registrado ningún tratamiento para este brote.</p>
+            }
+            else
+            {
+                <ul class="fn-timeline">
+                    @foreach (var t in Model.Tratamientos)
+                    {
+                        <li>
+                            <span class="fn-timeline__dot bg-warning"><i class="bi bi-eyedropper"></i></span>
+                            <div>
+                                <div class="d-flex justify-content-between">
+                                    <strong>@t.Descripcion</strong>
+                                    <span class="text-muted small">
+                                        @t.FechaAplicacion.ToString("dd/MM/yyyy")
+                                        @if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor))
+                                        {
+                                            <form asp-controller="Tratamientos" asp-action="Eliminar" asp-route-id="@t.Id" method="post" class="d-inline"
+                                                  onsubmit="return confirm('¿Eliminar este tratamiento?');">
+                                                @Html.AntiForgeryToken()
+                                                <button class="btn btn-link btn-sm text-danger p-0 ms-2"><i class="bi bi-trash"></i></button>
+                                            </form>
+                                        }
+                                    </span>
+                                </div>
+                                <div class="text-muted small">
+                                    @if (!string.IsNullOrEmpty(t.ProductoTexto)) { <span>Producto: @t.ProductoTexto</span> }
+                                    @if (!string.IsNullOrEmpty(t.Dosis)) { <span> · Dosis: @t.Dosis</span> }
+                                </div>
+                                @if (!string.IsNullOrEmpty(t.ResultadoObservado))
+                                {
+                                    <div class="small">Resultado: @t.ResultadoObservado</div>
+                                }
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>

@@ -20,6 +20,11 @@ public interface ICatalogoService
     Task<int?> PeriodoActivoIdAsync(CancellationToken ct = default);
 
     Task<IReadOnlyList<(int Id, string Texto)>> ColaboradoresActivosAsync(CancellationToken ct = default);
+
+    /// <summary>Lotes que pueden recibir registros de enfermedades: todos salvo eliminados o inactivos.</summary>
+    Task<IReadOnlyList<(int Id, string Texto)>> LotesOperativosAsync(CancellationToken ct = default);
+
+    Task<IReadOnlyList<(int Id, string Texto)>> TiposEnfermedadAsync(CancellationToken ct = default);
 }
 
 public class CatalogoService : ICatalogoService
@@ -61,5 +66,25 @@ public class CatalogoService : ICatalogoService
             .Select(c => new { c.Id, c.Nombre, c.Identificacion })
             .ToListAsync(ct);
         return cols.Select(c => (c.Id, $"{c.Nombre} ({c.Identificacion})")).ToList();
+    }
+
+    public async Task<IReadOnlyList<(int Id, string Texto)>> LotesOperativosAsync(CancellationToken ct = default)
+    {
+        var lotes = await _db.Lotes.AsNoTracking()
+            .Where(l => !l.Eliminado && l.Estado != EstadoLote.Inactivo)
+            .OrderBy(l => l.Codigo)
+            .Select(l => new { l.Id, l.Codigo, l.Nombre })
+            .ToListAsync(ct);
+        return lotes.Select(l => (l.Id, $"{l.Codigo} — {l.Nombre}")).ToList();
+    }
+
+    public async Task<IReadOnlyList<(int Id, string Texto)>> TiposEnfermedadAsync(CancellationToken ct = default)
+    {
+        var tipos = await _db.TiposEnfermedad.AsNoTracking()
+            .Where(t => t.Activo)
+            .OrderBy(t => t.Nombre)
+            .Select(t => new { t.Id, t.Nombre })
+            .ToListAsync(ct);
+        return tipos.Select(t => (t.Id, t.Nombre)).ToList();
     }
 }
