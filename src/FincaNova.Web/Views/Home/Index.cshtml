@@ -1,58 +1,219 @@
 @model DashboardViewModel
+@using FincaNova.Web.ViewSupport
 @{
     ViewData["Title"] = "Panel principal";
+    var esGestion = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor);
+
+    int Estado(EstadoLote e) => Model.LotesPorEstado.TryGetValue(e, out var n) ? n : 0;
+    string Barra(decimal valor, decimal maximo) =>
+        maximo > 0 ? Math.Max((double)(valor / maximo) * 100, 2).ToString(System.Globalization.CultureInfo.InvariantCulture) : "0";
+    var maxEtapa = new[] { Model.KgRecolectado, Model.KgSeco, Model.KgProcesado }.Max();
+    var maxRecolector = Model.TopRecolectores.Count > 0 ? Model.TopRecolectores.Max(r => r.Cajuelas) : 0m;
+    var maxFin = new[] { Model.Ingresos, Model.Gastos }.Max();
+    var maxCosto = Model.CostoLotes.Count > 0 ? Model.CostoLotes.Max(c => c.CostoUnitario) : 0m;
+
+    (string icono, string color) AlertaEstilo(TipoAlerta t) => t switch
+    {
+        TipoAlerta.EnfermedadRecurrente => ("bi-bug", "danger"),
+        TipoAlerta.StockMinimo => ("bi-box-seam", "warning"),
+        _ => ("bi-bell", "secondary")
+    };
 }
 
-<h1 class="fn-page-title"><partial name="_BrandLogo" /> Panel principal — @Model.Finca</h1>
-
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="fn-card h-100">
-            <div class="text-muted small text-uppercase"><i class="bi bi-map"></i> Lotes registrados</div>
-            <div class="fs-2 fw-bold text-primary">@Model.TotalLotes</div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="fn-card h-100">
-            <div class="text-muted small text-uppercase"><i class="bi bi-check2-circle"></i> Lotes en operación</div>
-            <div class="fs-2 fw-bold text-primary">@Model.LotesEnOperacion</div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="fn-card h-100">
-            <div class="text-muted small text-uppercase"><i class="bi bi-calendar-range"></i> Período activo</div>
-            <div class="fs-5 fw-semibold">@(Model.PeriodoActivo ?? "Sin definir")</div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a class="fn-card h-100 d-block text-decoration-none" asp-controller="Alertas" asp-action="Index">
-            <div class="text-muted small text-uppercase"><i class="bi bi-bell"></i> Alertas pendientes</div>
-            <div class="fs-2 fw-bold @(Model.AlertasPendientes > 0 ? "text-danger" : "text-primary")">@Model.AlertasPendientes</div>
-        </a>
-    </div>
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><partial name="_BrandLogo" /> Panel principal — @Model.Finca</h1>
+    @if (Model.HayPeriodoActivo)
+    {
+        <span class="text-muted">
+            <i class="bi bi-calendar-range"></i> @Model.PeriodoActivo
+            <span class="small">(@Model.PeriodoInicio?.ToString("dd/MM/yyyy") – @Model.PeriodoFin?.ToString("dd/MM/yyyy"))</span>
+        </span>
+    }
 </div>
 
-<div class="fn-card">
-    <h2 class="h5"><i class="bi bi-cup-hot"></i> Bienvenido a FincaNova</h2>
-    <p class="text-muted mb-3">
-        Sistema de gestión integral para la finca cafetalera. Use el menú lateral para acceder a los módulos:
-        <strong>Seguridad</strong>, <strong>Lotes y micro lotes</strong>, <strong>Registro de labores</strong>,
-        <strong>Control de enfermedades</strong>, <strong>Recolección y producción</strong> y
-        <strong>Finanzas</strong> (gastos, ventas, balance, inventario y reportes). El tablero de indicadores
-        se habilita en la siguiente entrega.
-    </p>
-    <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-primary btn-sm" asp-area="Lotes" asp-controller="Lotes" asp-action="Index">
-            <i class="bi bi-map"></i> Lotes y micro lotes
-        </a>
-        <a class="btn btn-outline-primary btn-sm" asp-area="Lotes" asp-controller="Periodos" asp-action="Index">
-            <i class="bi bi-calendar-range"></i> Períodos productivos
-        </a>
-        @if (User.IsInRole(Roles.Administrador))
+@if (!Model.HayPeriodoActivo)
+{
+    <div class="fn-card mb-3">
+        <p class="mb-2"><i class="bi bi-info-circle"></i> No hay un período productivo activo. Los indicadores de cosecha aparecerán cuando active uno.</p>
+        @if (esGestion)
         {
-            <a class="btn btn-outline-primary btn-sm" asp-area="Seguridad" asp-controller="Usuarios" asp-action="Index">
-                <i class="bi bi-people"></i> Usuarios y roles
+            <a class="btn btn-primary btn-sm" asp-area="Lotes" asp-controller="Periodos" asp-action="Index">
+                <i class="bi bi-calendar-plus"></i> Administrar períodos productivos
             </a>
         }
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase"><i class="bi bi-basket"></i> Cajuelas recolectadas</div>
+                <div class="fs-2 fw-bold text-primary">@Model.Cajuelas.ToString("N2")</div>
+                <div class="text-muted small">≈ @Ui.Kg(Model.KgRecolectado)</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase"><i class="bi bi-box-seam"></i> Café procesado</div>
+                <div class="fs-2 fw-bold text-primary">@Ui.Kg(Model.KgProcesado)</div>
+                <div class="text-muted small">seco: @Ui.Kg(Model.KgSeco)</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase"><i class="bi bi-graph-up"></i> Rendimiento global</div>
+                <div class="fs-2 fw-bold @(Model.RendimientoPct > 0 ? "text-success" : "text-muted")">@Model.RendimientoPct%</div>
+                <div class="text-muted small">procesado / recolectado</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase"><i class="bi bi-arrow-down-right"></i> Merma total</div>
+                <div class="fs-2 fw-bold @(Model.MermaPct > 0 ? "text-warning" : "text-muted")">@Model.MermaPct%</div>
+                <div class="text-muted small">pérdida entre etapas</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-6">
+            <div class="fn-card h-100">
+                <h2 class="h6 text-muted text-uppercase">Café por etapa del beneficiado</h2>
+                @foreach (var (etiqueta, valor) in new[] { ("Recolectado", Model.KgRecolectado), ("Café seco", Model.KgSeco), ("Procesado", Model.KgProcesado) })
+                {
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div style="width:100px" class="small">@etiqueta</div>
+                        <div class="flex-grow-1"><div class="bg-primary" style="height:14px;border-radius:7px;width:@(Barra(valor, maxEtapa))%"></div></div>
+                        <div class="small text-end" style="width:90px">@Ui.Kg(valor)</div>
+                    </div>
+                }
+                @if (maxEtapa == 0)
+                {
+                    <p class="text-muted small mb-0">Sin datos de producción todavía.</p>
+                }
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="fn-card h-100">
+                <h2 class="h6 text-muted text-uppercase">Avance de recolección por trabajador</h2>
+                @if (Model.TopRecolectores.Count == 0)
+                {
+                    <p class="text-muted small mb-0">Aún no hay recolecciones registradas en el período.</p>
+                }
+                @foreach (var r in Model.TopRecolectores)
+                {
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div style="width:130px" class="small text-truncate">@r.Colaborador</div>
+                        <div class="flex-grow-1"><div class="bg-success" style="height:14px;border-radius:7px;width:@(Barra(r.Cajuelas, maxRecolector))%"></div></div>
+                        <div class="small text-end" style="width:80px">@r.Cajuelas.ToString("N2")</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (esGestion)
+    {
+        <div class="row g-3 mb-3">
+            <div class="col-lg-6">
+                <div class="fn-card h-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h6 text-muted text-uppercase mb-0">Finanzas del período</h2>
+                        <a class="small" asp-area="Finanzas" asp-controller="Balance" asp-action="Index">Ver balance</a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 my-2">
+                        <div style="width:80px" class="small">Ingresos</div>
+                        <div class="flex-grow-1"><div class="bg-success" style="height:14px;border-radius:7px;width:@(Barra(Model.Ingresos, maxFin))%"></div></div>
+                        <div class="small text-end" style="width:110px">@Ui.Money(Model.Ingresos)</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div style="width:80px" class="small">Gastos</div>
+                        <div class="flex-grow-1"><div class="bg-danger" style="height:14px;border-radius:7px;width:@(Barra(Model.Gastos, maxFin))%"></div></div>
+                        <div class="small text-end" style="width:110px">@Ui.Money(Model.Gastos)</div>
+                    </div>
+                    <hr class="my-2" />
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold">Balance neto</span>
+                        <span class="fw-bold @(Model.BalanceNeto >= 0 ? "text-success" : "text-danger")">@Ui.Money(Model.BalanceNeto)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="fn-card h-100">
+                    <h2 class="h6 text-muted text-uppercase">Costo por cajuela (lotes con producción)</h2>
+                    @if (Model.CostoLotes.Count == 0)
+                    {
+                        <p class="text-muted small mb-0">Se calcula cuando hay recolección y gastos asociados a un lote.</p>
+                    }
+                    @foreach (var c in Model.CostoLotes)
+                    {
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div style="width:150px" class="small text-truncate">@c.Lote</div>
+                            <div class="flex-grow-1"><div class="bg-primary" style="height:14px;border-radius:7px;width:@(Barra(c.CostoUnitario, maxCosto))%"></div></div>
+                            <div class="small text-end" style="width:100px">@Ui.Money(c.CostoUnitario)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Estado de los lotes</h2>
+            @foreach (var e in new[] { EstadoLote.Activo, EstadoLote.EnProduccion, EstadoLote.EnDescanso, EstadoLote.Inactivo })
+            {
+                <div class="d-flex justify-content-between border-bottom py-1 small">
+                    <span><span class="badge bg-@Ui.EstadoLoteColor(e) fn-badge-estado">@Ui.EstadoLoteTexto(e)</span></span>
+                    <span class="fw-semibold">@Estado(e)</span>
+                </div>
+            }
+            <div class="d-flex justify-content-between pt-2 fw-bold">
+                <span>Total</span><span>@Model.TotalLotes</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Actividad del período</h2>
+            <dl class="row mb-0 small">
+                <dt class="col-8">Labores registradas</dt><dd class="col-4 text-end fw-semibold">@Model.LaboresCount</dd>
+                <dt class="col-8">Costo de mano de obra</dt><dd class="col-4 text-end fw-semibold">@Ui.Money(Model.CostoManoObra)</dd>
+                <dt class="col-8">Enfermedades sin controlar</dt>
+                <dd class="col-4 text-end fw-semibold @(Model.EnfermedadesActivas > 0 ? "text-danger" : "")">@Model.EnfermedadesActivas</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="fn-card h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h6 text-muted text-uppercase mb-0">Alertas pendientes</h2>
+                <span class="badge bg-@(Model.AlertasPendientes > 0 ? "danger" : "success")">@Model.AlertasPendientes</span>
+            </div>
+            @if (Model.UltimasAlertas.Count == 0)
+            {
+                <p class="text-muted small mt-2 mb-0"><i class="bi bi-check2-circle text-success"></i> Sin alertas pendientes.</p>
+            }
+            else
+            {
+                <ul class="list-unstyled small mt-2 mb-0">
+                    @foreach (var a in Model.UltimasAlertas)
+                    {
+                        var (ic, co) = AlertaEstilo(a.Tipo);
+                        <li class="d-flex gap-2 border-bottom py-1">
+                            <i class="bi @ic text-@co"></i>
+                            <span class="text-truncate" title="@a.Mensaje">@a.Mensaje</span>
+                        </li>
+                    }
+                </ul>
+                @if (esGestion)
+                {
+                    <a class="small d-inline-block mt-2" asp-controller="Alertas" asp-action="Index">Ver todas</a>
+                }
+            }
+        </div>
     </div>
 </div>

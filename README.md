@@ -130,6 +130,15 @@ src/FincaNova.Web/
   - Alerta automática de stock mínimo (y retiro automático al reabastecer).
   - Reportes exportables a PDF/Excel: producción por lote, consolidado financiero
     por período y costo real por cajuela (con manejo de producción cero).
-- [ ] **Hito 7** — Dashboard de indicadores
+- [x] **Hito 7 — Dashboard de indicadores** *(commit `Hito 7`)*
+  - Panel principal con indicadores reales del período productivo activo:
+    cajuelas recolectadas y kilogramos, café procesado, rendimiento y merma
+    global, café por etapa del beneficiado y avance de recolección por trabajador.
+  - Finanzas del período (ingresos, gastos, balance) y costo por cajuela de los
+    lotes con producción — visibles solo para roles de gestión.
+  - Estado de los lotes, actividad del período (labores, costo de mano de obra,
+    enfermedades sin controlar) y alertas pendientes recientes.
+
+**Los 7 hitos del alcance funcional están completos.**
 
 La documentación funcional del proyecto está en `OneDrive_1_29-8-2026/`.
