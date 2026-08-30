@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using FincaNova.Web.Domain;
+using FincaNova.Web.ViewSupport;
 
 namespace FincaNova.Web.Areas.Labores.Models;
 
@@ -23,15 +24,17 @@ public class ColaboradorFormViewModel
 
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     [StringLength(120)]
+    [RegularExpression(Validaciones.Nombre, ErrorMessage = Validaciones.NombreMsg)]
     [Display(Name = "Nombre completo")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "La identificación es obligatoria.")]
     [StringLength(30)]
+    [RegularExpression(Validaciones.Identificacion, ErrorMessage = Validaciones.IdentificacionMsg)]
     [Display(Name = "Identificación (cédula)")]
     public string Identificacion { get; set; } = string.Empty;
 
-    [Phone(ErrorMessage = "El teléfono no es válido.")]
+    [RegularExpression(Validaciones.Telefono, ErrorMessage = Validaciones.TelefonoMsg)]
     [StringLength(30)]
     [Display(Name = "Teléfono")]
     public string? Telefono { get; set; }

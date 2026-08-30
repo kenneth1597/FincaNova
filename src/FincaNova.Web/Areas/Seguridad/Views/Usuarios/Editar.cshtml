@@ -21,17 +21,17 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label asp-for="Nombre" class="form-label"></label>
-                <input asp-for="Nombre" class="form-control" />
+                <input asp-for="Nombre" class="form-control" data-fn="nombre" maxlength="120" autocomplete="off" />
                 <span asp-validation-for="Nombre" class="text-danger small"></span>
             </div>
             <div class="col-md-6">
                 <label asp-for="Apellidos" class="form-label"></label>
-                <input asp-for="Apellidos" class="form-control" />
+                <input asp-for="Apellidos" class="form-control" data-fn="nombre" maxlength="120" autocomplete="off" />
                 <span asp-validation-for="Apellidos" class="text-danger small"></span>
             </div>
             <div class="col-md-6">
                 <label asp-for="Telefono" class="form-label"></label>
-                <input asp-for="Telefono" class="form-control" />
+                <input asp-for="Telefono" class="form-control" data-fn="digits" maxlength="30" placeholder="8888-0000" />
                 <span asp-validation-for="Telefono" class="text-danger small"></span>
             </div>
             <div class="col-md-6">

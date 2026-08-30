@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FincaNova.Web.ViewSupport;
 
 namespace FincaNova.Web.Areas.Seguridad.Models;
 
@@ -20,11 +21,13 @@ public class CrearUsuarioViewModel
 {
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     [StringLength(120)]
+    [RegularExpression(Validaciones.Nombre, ErrorMessage = Validaciones.NombreMsg)]
     [Display(Name = "Nombre")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Los apellidos son obligatorios.")]
     [StringLength(120)]
+    [RegularExpression(Validaciones.Nombre, ErrorMessage = Validaciones.NombreMsg)]
     [Display(Name = "Apellidos")]
     public string Apellidos { get; set; } = string.Empty;
 
@@ -33,7 +36,7 @@ public class CrearUsuarioViewModel
     [Display(Name = "Correo electrónico")]
     public string Email { get; set; } = string.Empty;
 
-    [Phone(ErrorMessage = "El teléfono no es válido.")]
+    [RegularExpression(Validaciones.Telefono, ErrorMessage = Validaciones.TelefonoMsg)]
     [StringLength(30)]
     [Display(Name = "Teléfono")]
     public string? Telefono { get; set; }
@@ -66,15 +69,17 @@ public class EditarUsuarioViewModel
 
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     [StringLength(120)]
+    [RegularExpression(Validaciones.Nombre, ErrorMessage = Validaciones.NombreMsg)]
     [Display(Name = "Nombre")]
     public string Nombre { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Los apellidos son obligatorios.")]
     [StringLength(120)]
+    [RegularExpression(Validaciones.Nombre, ErrorMessage = Validaciones.NombreMsg)]
     [Display(Name = "Apellidos")]
     public string Apellidos { get; set; } = string.Empty;
 
-    [Phone(ErrorMessage = "El teléfono no es válido.")]
+    [RegularExpression(Validaciones.Telefono, ErrorMessage = Validaciones.TelefonoMsg)]
     [StringLength(30)]
     [Display(Name = "Teléfono")]
     public string? Telefono { get; set; }

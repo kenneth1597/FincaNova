@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using FincaNova.Web.Domain;
+using FincaNova.Web.ViewSupport;
 
 namespace FincaNova.Web.Areas.Lotes.Models;
 
@@ -35,6 +36,7 @@ public class LoteFormViewModel
 
     [Required(ErrorMessage = "El código es obligatorio.")]
     [StringLength(30)]
+    [RegularExpression(Validaciones.Codigo, ErrorMessage = Validaciones.CodigoMsg)]
     [Display(Name = "Código")]
     public string Codigo { get; set; } = string.Empty;
 

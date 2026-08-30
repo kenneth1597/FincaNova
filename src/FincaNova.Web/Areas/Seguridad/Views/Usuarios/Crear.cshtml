@@ -12,22 +12,22 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label asp-for="Nombre" class="form-label"></label>
-                <input asp-for="Nombre" class="form-control" />
+                <input asp-for="Nombre" class="form-control" data-fn="nombre" maxlength="120" autocomplete="off" />
                 <span asp-validation-for="Nombre" class="text-danger small"></span>
             </div>
             <div class="col-md-6">
                 <label asp-for="Apellidos" class="form-label"></label>
-                <input asp-for="Apellidos" class="form-control" />
+                <input asp-for="Apellidos" class="form-control" data-fn="nombre" maxlength="120" autocomplete="off" />
                 <span asp-validation-for="Apellidos" class="text-danger small"></span>
             </div>
             <div class="col-md-7">
                 <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" type="email" maxlength="256" autocomplete="off" placeholder="correo@ejemplo.com" />
                 <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
             <div class="col-md-5">
                 <label asp-for="Telefono" class="form-label"></label>
-                <input asp-for="Telefono" class="form-control" />
+                <input asp-for="Telefono" class="form-control" data-fn="digits" maxlength="30" placeholder="8888-0000" />
                 <span asp-validation-for="Telefono" class="text-danger small"></span>
             </div>
             <div class="col-md-5">
@@ -43,12 +43,12 @@
             </div>
             <div class="col-md-4">
                 <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
                 <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
             <div class="col-md-4">
                 <label asp-for="ConfirmarPassword" class="form-label"></label>
-                <input asp-for="ConfirmarPassword" class="form-control" />
+                <input asp-for="ConfirmarPassword" class="form-control" autocomplete="new-password" />
                 <span asp-validation-for="ConfirmarPassword" class="text-danger small"></span>
             </div>
         </div>
