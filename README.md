@@ -70,7 +70,16 @@ src/FincaNova.Web/
     vence a los 30 minutos y formulario de nueva contraseña. En desarrollo el correo se
     guarda como archivo (`App_Data/correos/`); en producción se usa un `IEmailSender` SMTP.
   - Visor de la bitácora de auditoría de **solo lectura** con filtros y paginación.
-- [ ] **Hito 2** — Lotes y micro lotes + períodos productivos
+- [x] **Hito 2 — Lotes y micro lotes + períodos productivos** *(commit `Hito 2`)*
+  - Listado con panel por estado, búsqueda y filtros; alta de lotes y micro lotes
+    con código único; edición de ficha técnica (código no editable).
+  - Cambio de estado con responsable, inactivación (borrado lógico que conserva el
+    historial) y eliminación solo sin registros asociados.
+  - Detalle del lote con bitácora cronológica (labores, enfermedades, recolecciones,
+    producción y gastos) filtrable por fechas.
+  - Períodos productivos: uno activo a la vez, sin fechas solapadas.
+  - Identidad visual cafetalera: logotipo de grano de café, favicon, ilustración de
+    rama de café en el acceso, íconos y línea de tiempo temáticos.
 - [ ] **Hito 3** — Registro de labores + colaboradores + planilla
 - [ ] **Hito 4** — Control de enfermedades + tratamientos + alertas
 - [ ] **Hito 5** — Recolección y producción + merma
