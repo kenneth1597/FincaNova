@@ -1,0 +1,59 @@
+@model RendimientoViewModel
+@{
+    ViewData["Title"] = "Rendimiento por lote";
+}
+
+<h1 class="fn-page-title"><i class="bi bi-bar-chart"></i> Rendimiento por lote y período</h1>
+<p class="text-muted">Compara los kilogramos de café procesado de cada lote a lo largo de los períodos productivos (HU-16).</p>
+
+@if (!Model.HayDatos)
+{
+    <div class="fn-card text-center text-muted py-4">
+        <i class="bi bi-clipboard-x d-block fs-3 mb-1"></i>
+        Todavía no hay café procesado registrado. La comparativa aparecerá cuando existan cosechas con peso final.
+    </div>
+}
+else
+{
+    <div class="fn-card p-0">
+        <div class="table-responsive">
+            <table class="table fn-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Lote</th>
+                        @foreach (var p in Model.Periodos)
+                        {
+                            <th class="text-end">@p</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var fila in Model.Lotes)
+                {
+                    <tr>
+                        <td class="fw-semibold">@fila.Lote</td>
+                        @foreach (var v in fila.Valores)
+                        {
+                            var pct = Model.MaximoKg > 0 ? (double)(v / Model.MaximoKg) * 100 : 0;
+                            <td class="text-end" style="min-width:130px">
+                                @if (v > 0)
+                                {
+                                    <div class="d-flex align-items-center justify-content-end gap-2">
+                                        <span class="small">@Ui.Kg(v)</span>
+                                        <span class="d-inline-block bg-primary" style="height:10px;border-radius:5px;width:@(Math.Max(pct, 6).ToString(System.Globalization.CultureInfo.InvariantCulture))px"></span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="text-muted small mt-2">La barra es proporcional al máximo registrado (@Ui.Kg(Model.MaximoKg)).</p>
+}

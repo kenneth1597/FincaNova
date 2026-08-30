@@ -349,7 +349,7 @@ public class LotesController : Controller
         items.AddRange(labores.Select(l => new BitacoraItemViewModel
         {
             Fecha = l.Fecha, Tipo = "Labor", Icono = "bi-tools", Color = "primary",
-            Descripcion = l.TipoLabor, Detalle = l.CostoCalculado > 0 ? $"Costo: {l.CostoCalculado:N2}" : null
+            Descripcion = l.TipoLabor, Detalle = l.CostoCalculado > 0 ? $"Costo: {Ui.Money(l.CostoCalculado)}" : null
         }));
 
         var enfermedades = await _db.RegistrosEnfermedad.AsNoTracking()
@@ -366,12 +366,12 @@ public class LotesController : Controller
         var recolecciones = await _db.Recolecciones.AsNoTracking()
             .Where(r => r.LoteId == loteId
                 && (desde == null || r.Fecha >= desde) && (hastaExcl == null || r.Fecha < hastaExcl))
-            .Select(r => new { r.Fecha, r.Cajuelas })
+            .Select(r => new { r.Fecha, r.Cajuelas, r.PesoEstimadoKg })
             .ToListAsync();
         items.AddRange(recolecciones.Select(r => new BitacoraItemViewModel
         {
             Fecha = r.Fecha, Tipo = "Recolección", Icono = "bi-basket", Color = "success",
-            Descripcion = $"{r.Cajuelas:N2} cajuelas recolectadas"
+            Descripcion = $"{r.Cajuelas:N2} cajuelas recolectadas ({Ui.Kg(r.PesoEstimadoKg)})"
         }));
 
         var produccion = await _db.RegistrosProduccion.AsNoTracking()
@@ -382,7 +382,7 @@ public class LotesController : Controller
         items.AddRange(produccion.Select(p => new BitacoraItemViewModel
         {
             Fecha = p.Fecha, Tipo = "Producción", Icono = "bi-box-seam", Color = "success",
-            Descripcion = $"{p.Etapa}: {p.PesoKg:N2} kg"
+            Descripcion = $"{Ui.EtapaProduccionTexto(p.Etapa)}: {Ui.Kg(p.PesoKg)}"
         }));
 
         var gastos = await _db.Gastos.AsNoTracking()
@@ -393,7 +393,7 @@ public class LotesController : Controller
         items.AddRange(gastos.Select(g => new BitacoraItemViewModel
         {
             Fecha = g.Fecha, Tipo = "Gasto", Icono = "bi-cash-coin", Color = "warning",
-            Descripcion = $"{g.Categoria}: {g.Monto:N2}", Detalle = g.Descripcion
+            Descripcion = $"{g.Categoria}: {Ui.Money(g.Monto)}", Detalle = g.Descripcion
         }));
 
         return items.OrderByDescending(i => i.Fecha).ToList();

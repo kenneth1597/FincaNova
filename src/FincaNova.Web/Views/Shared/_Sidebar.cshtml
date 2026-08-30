@@ -40,19 +40,20 @@
             <i class="bi bi-bug"></i> Control de enfermedades
         </a>
         <a class="fn-sidebar__link @Active("Produccion", "Recoleccion")" asp-area="Produccion" asp-controller="Recoleccion" asp-action="Index">
-            <i class="bi bi-basket"></i> Recolección y producción
+            <i class="bi bi-basket"></i> Recolección
         </a>
-
-        <div class="fn-sidebar__section">Administración</div>
+        <a class="fn-sidebar__link @Active("Produccion", "Produccion")" asp-area="Produccion" asp-controller="Produccion" asp-action="Index">
+            <i class="bi bi-droplet-half"></i> Producción y merma
+        </a>
         @if (esGestion)
         {
-            <a class="fn-sidebar__link @Active("Finanzas", "Finanzas")" asp-area="Finanzas" asp-controller="Finanzas" asp-action="Index">
-                <i class="bi bi-cash-coin"></i> Ingresos y gastos
-            </a>
-            <a class="fn-sidebar__link @Active("Finanzas", "Inventario")" asp-area="Finanzas" asp-controller="Inventario" asp-action="Index">
-                <i class="bi bi-box-seam"></i> Inventario de insumos
+            <a class="fn-sidebar__link @(((ViewContext.RouteData.Values["action"] as string) == "Rendimiento") ? "active" : "")"
+               asp-area="Produccion" asp-controller="Produccion" asp-action="Rendimiento">
+                <i class="bi bi-bar-chart"></i> Rendimiento por lote
             </a>
         }
+
+        <div class="fn-sidebar__section">Administración</div>
         <a class="fn-sidebar__link @Active("Lotes", "Periodos")" asp-area="Lotes" asp-controller="Periodos" asp-action="Index">
             <i class="bi bi-calendar-range"></i> Períodos productivos
         </a>

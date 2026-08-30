@@ -20,7 +20,7 @@ public class HomeController : Controller
         {
             Finca = await _db.Fincas.Select(f => f.Nombre).FirstOrDefaultAsync() ?? "Finca",
             TotalLotes = await _db.Lotes.CountAsync(l => !l.Eliminado),
-            LotesActivos = await _db.Lotes.CountAsync(l => !l.Eliminado && l.Estado == Domain.EstadoLote.Activo),
+            LotesEnOperacion = await _db.Lotes.CountAsync(l => !l.Eliminado && l.Estado != Domain.EstadoLote.Inactivo),
             PeriodoActivo = await _db.PeriodosProductivos.Where(p => p.Activo).Select(p => p.Nombre).FirstOrDefaultAsync(),
             AlertasPendientes = await _db.Alertas.CountAsync(a => !a.Atendida)
         };

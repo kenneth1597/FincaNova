@@ -55,7 +55,7 @@
                     <td class="fw-semibold"><a asp-action="Detalle" asp-route-id="@c.Id" class="text-decoration-none">@c.Nombre</a></td>
                     <td>@c.Identificacion</td>
                     <td>@(string.IsNullOrEmpty(c.Cargo) ? "—" : c.Cargo)</td>
-                    <td class="text-end">@c.TarifaJornada.ToString("N2")</td>
+                    <td class="text-end">@Ui.Money(c.TarifaJornada)</td>
                     <td class="text-end">@c.Labores</td>
                     <td><span class="badge bg-@Ui.EstadoColaboradorColor(c.Estado) fn-badge-estado">@Ui.EstadoColaboradorTexto(c.Estado)</span></td>
                     <td class="text-end text-nowrap">

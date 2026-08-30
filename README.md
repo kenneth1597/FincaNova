@@ -104,6 +104,16 @@ src/FincaNova.Web/
     dentro de la ventana de días, con dedupe y panel de alertas con «marcar atendida».
   - Las detecciones aparecen en la bitácora del lote.
 - [ ] **Hito 5** — Recolección y producción + merma
+- [x] **Hito 5 — Recolección y producción** *(commit `Hito 5`)*
+  - Registro diario de recolección en cajuelas por trabajador, con conversión
+    automática a kilogramos (regla configurable por finca) y vista previa en vivo.
+  - Avance del período: total de cajuelas y kg, y acumulado por trabajador.
+  - Pesos de café seco y café procesado por lote y período, con cálculo de merma
+    entre etapas y rendimiento global.
+  - Comparativa de rendimiento por lote a lo largo de los períodos (con aviso
+    cuando un lote no tiene historial).
+  - La recolección alimenta la parte de cajuelas de la planilla; recolección y
+    producción aparecen en la bitácora del lote.
 - [ ] **Hito 6** — Ingresos, gastos, inventario, reportes PDF/Excel
 - [ ] **Hito 7** — Dashboard de indicadores
 

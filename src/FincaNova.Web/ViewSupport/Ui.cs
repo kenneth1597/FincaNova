@@ -5,6 +5,13 @@ namespace FincaNova.Web.ViewSupport;
 /// <summary>Textos y colores para mostrar enums del dominio en las vistas.</summary>
 public static class Ui
 {
+    /// <summary>Símbolo de moneda de la finca (colón costarricense).</summary>
+    public const string SimboloMoneda = "₡";
+
+    /// <summary>Formatea un monto con el símbolo de moneda: <c>₡50 000,00</c>.</summary>
+    public static string Money(decimal monto) => $"{SimboloMoneda}{monto:N2}";
+
+
     public static string EstadoLoteTexto(EstadoLote e) => e switch
     {
         EstadoLote.Activo => "Activo",
@@ -54,4 +61,15 @@ public static class Ui
         EstadoEnfermedad.Controlada => "success",
         _ => "secondary"
     };
+
+    public static string EtapaProduccionTexto(EtapaProduccion e) => e switch
+    {
+        EtapaProduccion.Recoleccion => "Café recolectado",
+        EtapaProduccion.CafeSeco => "Café seco",
+        EtapaProduccion.CafeProcesado => "Café procesado (sin cáscara)",
+        _ => e.ToString()
+    };
+
+    /// <summary>Formatea un peso en kilogramos: <c>1 234,50 kg</c>.</summary>
+    public static string Kg(decimal kg) => $"{kg:N2} kg";
 }

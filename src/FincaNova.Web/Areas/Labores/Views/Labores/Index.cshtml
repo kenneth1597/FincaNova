@@ -76,7 +76,7 @@
                     <td>@Ui.ModalidadPagoTexto(l.Modalidad)</td>
                     <td class="text-end">@l.Cantidad.ToString("N2")</td>
                     <td class="text-end">@l.Colaboradores</td>
-                    <td class="text-end">@l.CostoCalculado.ToString("N2")</td>
+                    <td class="text-end">@Ui.Money(l.CostoCalculado)</td>
                     <td class="text-end text-nowrap">
                         <a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@l.Id"><i class="bi bi-eye"></i></a>
                         <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@l.Id"><i class="bi bi-pencil"></i></a>
@@ -89,7 +89,7 @@
                 <tfoot>
                     <tr class="fw-bold">
                         <td colspan="6" class="text-end">Total</td>
-                        <td class="text-end">@Model.TotalCosto.ToString("N2")</td>
+                        <td class="text-end">@Ui.Money(Model.TotalCosto)</td>
                         <td></td>
                     </tr>
                 </tfoot>

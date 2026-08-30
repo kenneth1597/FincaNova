@@ -32,7 +32,7 @@
                 <dt class="col-5">Período</dt><dd class="col-7">@(Model.Periodo ?? "—")</dd>
                 <dt class="col-5">Modalidad</dt><dd class="col-7">@Ui.ModalidadPagoTexto(l.Modalidad)</dd>
                 <dt class="col-5">Cantidad</dt><dd class="col-7">@cantidad.ToString("N2") @(l.Modalidad == ModalidadPago.PorHora ? "horas" : "jornadas") por colaborador</dd>
-                <dt class="col-5">Costo total</dt><dd class="col-7 fw-bold text-primary">@l.CostoCalculado.ToString("N2")</dd>
+                <dt class="col-5">Costo total</dt><dd class="col-7 fw-bold text-primary">@Ui.Money(l.CostoCalculado)</dd>
             </dl>
             @if (!string.IsNullOrEmpty(l.Observaciones))
             {
@@ -49,10 +49,10 @@
                     <tbody>
                     @foreach (var d in Model.Desglose)
                     {
-                        <tr><td>@d.Colaborador</td><td class="text-end">@d.Cantidad.ToString("N2")</td><td class="text-end">@d.Costo.ToString("N2")</td></tr>
+                        <tr><td>@d.Colaborador</td><td class="text-end">@d.Cantidad.ToString("N2")</td><td class="text-end">@Ui.Money(d.Costo)</td></tr>
                     }
                     </tbody>
-                    <tfoot><tr class="fw-bold"><td class="text-end" colspan="2">Total</td><td class="text-end">@l.CostoCalculado.ToString("N2")</td></tr></tfoot>
+                    <tfoot><tr class="fw-bold"><td class="text-end" colspan="2">Total</td><td class="text-end">@Ui.Money(l.CostoCalculado)</td></tr></tfoot>
                 </table>
             </div>
         </div>

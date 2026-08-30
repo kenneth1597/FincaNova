@@ -22,10 +22,10 @@
             <h2 class="h6 text-muted text-uppercase">Datos y tarifas</h2>
             <dl class="row mb-0 small">
                 <dt class="col-6">Teléfono</dt><dd class="col-6">@(c.Telefono ?? "—")</dd>
-                <dt class="col-6">Tarifa jornada</dt><dd class="col-6">@c.TarifaJornada.ToString("N2")</dd>
-                <dt class="col-6">Tarifa hora</dt><dd class="col-6">@c.TarifaHora.ToString("N2")</dd>
-                <dt class="col-6">Tarifa cajuela</dt><dd class="col-6">@c.TarifaCajuela.ToString("N2")</dd>
-                <dt class="col-6">Total acumulado</dt><dd class="col-6 fw-bold text-primary">@Model.TotalAcumulado.ToString("N2")</dd>
+                <dt class="col-6">Tarifa jornada</dt><dd class="col-6">@Ui.Money(c.TarifaJornada)</dd>
+                <dt class="col-6">Tarifa hora</dt><dd class="col-6">@Ui.Money(c.TarifaHora)</dd>
+                <dt class="col-6">Tarifa cajuela</dt><dd class="col-6">@Ui.Money(c.TarifaCajuela)</dd>
+                <dt class="col-6">Total acumulado</dt><dd class="col-6 fw-bold text-primary">@Ui.Money(Model.TotalAcumulado)</dd>
             </dl>
         </div>
     </div>
@@ -47,7 +47,7 @@
                             <td>@h.Lote</td>
                             <td>@h.TipoLabor</td>
                             <td class="text-end">@h.Cantidad.ToString("N2")</td>
-                            <td class="text-end">@h.Costo.ToString("N2")</td>
+                            <td class="text-end">@Ui.Money(h.Costo)</td>
                         </tr>
                     }
                     </tbody>

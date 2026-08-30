@@ -1,0 +1,136 @@
+@model RecoleccionFiltroViewModel
+@{
+    ViewData["Title"] = "Recolección";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-basket"></i> Recolección de café</h1>
+    <a class="btn btn-primary" asp-action="Crear"><i class="bi bi-plus-lg"></i> Registrar recolección</a>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3">
+        <div class="fn-card h-100">
+            <div class="text-muted small text-uppercase">Total cajuelas @(Model.PeriodoNombre is null ? "" : "· " + Model.PeriodoNombre)</div>
+            <div class="fs-3 fw-bold text-primary">@Model.TotalCajuelas.ToString("N2")</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="fn-card h-100">
+            <div class="text-muted small text-uppercase">Peso estimado</div>
+            <div class="fs-3 fw-bold text-primary">@Ui.Kg(Model.TotalKg)</div>
+            <div class="text-muted small">1 cajuela ≈ @Model.KilogramosPorCajuela.ToString("N2") kg</div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="fn-card h-100">
+            <div class="text-muted small text-uppercase mb-1">Acumulado por trabajador</div>
+            @if (Model.Acumulado.Count == 0)
+            {
+                <span class="text-muted small">Sin recolecciones para el filtro actual.</span>
+            }
+            else
+            {
+                <table class="table table-sm mb-0">
+                    <tbody>
+                    @foreach (var a in Model.Acumulado)
+                    {
+                        <tr><td>@a.Colaborador</td><td class="text-end">@a.Cajuelas.ToString("N2") caj.</td><td class="text-end text-muted">@Ui.Kg(a.Kg)</td></tr>
+                    }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Lote</label>
+            <select name="loteId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Lotes) { <option value="@id" selected="@(Model.LoteId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Período</label>
+            <select name="periodoId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Periodos) { <option value="@id" selected="@(Model.PeriodoId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Trabajador</label>
+            <select name="colaboradorId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Colaboradores) { <option value="@id" selected="@(Model.ColaboradorId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-1">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-1">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-1 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th><th>Lote</th><th>Trabajador</th>
+                    <th class="text-end">Cajuelas</th><th class="text-end">Peso estimado</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Resultados.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">
+                    <i class="bi bi-basket d-block fs-3 mb-1"></i>
+                    Aún no existen cantidades de café recolectadas para el filtro actual.
+                </td></tr>
+            }
+            @foreach (var r in Model.Resultados)
+            {
+                <tr>
+                    <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@r.Lote</td>
+                    <td>@r.Colaborador</td>
+                    <td class="text-end">@r.Cajuelas.ToString("N2")</td>
+                    <td class="text-end">@Ui.Kg(r.PesoEstimadoKg)</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@r.Id"><i class="bi bi-pencil"></i></a>
+                        @if (User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor))
+                        {
+                            <form asp-action="Eliminar" asp-route-id="@r.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar esta recolección?');">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+            @if (Model.Resultados.Count > 0)
+            {
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="3" class="text-end">Total</td>
+                        <td class="text-end">@Model.TotalCajuelas.ToString("N2")</td>
+                        <td class="text-end">@Ui.Kg(Model.TotalKg)</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
+</div>

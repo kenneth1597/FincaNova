@@ -56,11 +56,11 @@
                         <td>@l.TipoLabor</td>
                         <td>@l.Modalidad</td>
                         <td class="text-end">@l.Cantidad.ToString("N2")</td>
-                        <td class="text-end">@l.Costo.ToString("N2")</td>
+                        <td class="text-end">@Ui.Money(l.Costo)</td>
                     </tr>
                 }
                 </tbody>
-                <tfoot><tr class="fw-semibold"><td colspan="5" class="text-end">Subtotal labores</td><td class="text-end">@Model.SubtotalLabores.ToString("N2")</td></tr></tfoot>
+                <tfoot><tr class="fw-semibold"><td colspan="5" class="text-end">Subtotal labores</td><td class="text-end">@Ui.Money(Model.SubtotalLabores)</td></tr></tfoot>
             </table>
         </div>
 
@@ -79,18 +79,18 @@
                         <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
                         <td>@r.Lote</td>
                         <td class="text-end">@r.Cajuelas.ToString("N2")</td>
-                        <td class="text-end">@r.Tarifa.ToString("N2")</td>
-                        <td class="text-end">@r.Monto.ToString("N2")</td>
+                        <td class="text-end">@Ui.Money(r.Tarifa)</td>
+                        <td class="text-end">@Ui.Money(r.Monto)</td>
                     </tr>
                 }
                 </tbody>
-                <tfoot><tr class="fw-semibold"><td colspan="4" class="text-end">Subtotal recolección</td><td class="text-end">@Model.SubtotalRecoleccion.ToString("N2")</td></tr></tfoot>
+                <tfoot><tr class="fw-semibold"><td colspan="4" class="text-end">Subtotal recolección</td><td class="text-end">@Ui.Money(Model.SubtotalRecoleccion)</td></tr></tfoot>
             </table>
         </div>
 
         <div class="alert alert-success d-flex justify-content-between align-items-center mb-0">
             <span class="fw-bold"><i class="bi bi-cash-coin"></i> Total a pagar</span>
-            <span class="fs-4 fw-bold">@Model.Total.ToString("N2")</span>
+            <span class="fs-4 fw-bold">@Ui.Money(Model.Total)</span>
         </div>
     </div>
 }

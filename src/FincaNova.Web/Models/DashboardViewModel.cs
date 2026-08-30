@@ -5,7 +5,10 @@ public class DashboardViewModel
 {
     public string Finca { get; set; } = string.Empty;
     public int TotalLotes { get; set; }
-    public int LotesActivos { get; set; }
+
+    /// <summary>Lotes en operación: activos, en producción o en descanso (no inactivos).</summary>
+    public int LotesEnOperacion { get; set; }
+
     public string? PeriodoActivo { get; set; }
     public int AlertasPendientes { get; set; }
 }
