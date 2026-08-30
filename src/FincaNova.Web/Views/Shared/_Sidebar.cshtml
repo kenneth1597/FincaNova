@@ -53,6 +53,26 @@
             </a>
         }
 
+        @if (esGestion)
+        {
+            <div class="fn-sidebar__section">Finanzas</div>
+            <a class="fn-sidebar__link @Active("Finanzas", "Gastos")" asp-area="Finanzas" asp-controller="Gastos" asp-action="Index">
+                <i class="bi bi-receipt"></i> Gastos
+            </a>
+            <a class="fn-sidebar__link @Active("Finanzas", "Ventas")" asp-area="Finanzas" asp-controller="Ventas" asp-action="Index">
+                <i class="bi bi-cash-coin"></i> Ventas de café
+            </a>
+            <a class="fn-sidebar__link @Active("Finanzas", "Balance")" asp-area="Finanzas" asp-controller="Balance" asp-action="Index">
+                <i class="bi bi-graph-up-arrow"></i> Balance
+            </a>
+            <a class="fn-sidebar__link @Active("Finanzas", "Inventario")" asp-area="Finanzas" asp-controller="Inventario" asp-action="Index">
+                <i class="bi bi-box-seam"></i> Inventario de insumos
+            </a>
+            <a class="fn-sidebar__link @Active("Finanzas", "Reportes")" asp-area="Finanzas" asp-controller="Reportes" asp-action="Index">
+                <i class="bi bi-file-earmark-bar-graph"></i> Reportes
+            </a>
+        }
+
         <div class="fn-sidebar__section">Administración</div>
         <a class="fn-sidebar__link @Active("Lotes", "Periodos")" asp-area="Lotes" asp-controller="Periodos" asp-action="Index">
             <i class="bi bi-calendar-range"></i> Períodos productivos

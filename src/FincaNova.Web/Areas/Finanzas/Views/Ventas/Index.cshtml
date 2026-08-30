@@ -1,0 +1,67 @@
+@model VentaFiltroViewModel
+@{ ViewData["Title"] = "Ventas de café"; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-cash-coin"></i> Ventas de café</h1>
+    <a class="btn btn-primary" asp-action="Crear"><i class="bi bi-plus-lg"></i> Registrar venta</a>
+</div>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-4">
+            <label class="form-label small text-muted">Período</label>
+            <select name="periodoId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Periodos) { <option value="@id" selected="@(Model.PeriodoId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr><th>Fecha</th><th>Comprador</th><th class="text-end">Cantidad</th><th class="text-end">Precio unit.</th><th class="text-end">Total</th><th></th></tr>
+            </thead>
+            <tbody>
+            @if (Model.Resultados.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-cash-coin d-block fs-3 mb-1"></i>No hay ventas registradas.</td></tr>
+            }
+            @foreach (var v in Model.Resultados)
+            {
+                <tr>
+                    <td>@v.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@v.Comprador</td>
+                    <td class="text-end">@v.Cantidad.ToString("N2") @v.UnidadMedida</td>
+                    <td class="text-end">@Ui.Money(v.PrecioUnitario)</td>
+                    <td class="text-end fw-semibold">@Ui.Money(v.Total)</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@v.Id"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Eliminar" asp-route-id="@v.Id" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar esta venta?');">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+            @if (Model.Resultados.Count > 0)
+            {
+                <tfoot><tr class="fw-bold"><td colspan="4" class="text-end">Total de ventas</td><td class="text-end">@Ui.Money(Model.Total)</td><td></td></tr></tfoot>
+            }
+        </table>
+    </div>
+</div>

@@ -25,6 +25,8 @@ public interface ICatalogoService
     Task<IReadOnlyList<(int Id, string Texto)>> LotesOperativosAsync(CancellationToken ct = default);
 
     Task<IReadOnlyList<(int Id, string Texto)>> TiposEnfermedadAsync(CancellationToken ct = default);
+
+    Task<IReadOnlyList<(int Id, string Texto)>> InsumosActivosAsync(CancellationToken ct = default);
 }
 
 public class CatalogoService : ICatalogoService
@@ -86,5 +88,15 @@ public class CatalogoService : ICatalogoService
             .Select(t => new { t.Id, t.Nombre })
             .ToListAsync(ct);
         return tipos.Select(t => (t.Id, t.Nombre)).ToList();
+    }
+
+    public async Task<IReadOnlyList<(int Id, string Texto)>> InsumosActivosAsync(CancellationToken ct = default)
+    {
+        var insumos = await _db.Insumos.AsNoTracking()
+            .Where(i => i.Activo)
+            .OrderBy(i => i.Nombre)
+            .Select(i => new { i.Id, i.Nombre, i.UnidadMedida, i.StockActual })
+            .ToListAsync(ct);
+        return insumos.Select(i => (i.Id, $"{i.Nombre} (disp. {i.StockActual:N2} {i.UnidadMedida})")).ToList();
     }
 }

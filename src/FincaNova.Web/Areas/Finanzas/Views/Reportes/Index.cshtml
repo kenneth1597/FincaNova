@@ -1,0 +1,31 @@
+@{ ViewData["Title"] = "Reportes"; }
+
+<h1 class="fn-page-title"><i class="bi bi-file-earmark-bar-graph"></i> Reportes</h1>
+<p class="text-muted">Todos los reportes se pueden exportar a PDF y Excel (HU-26, HU-27).</p>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <a class="fn-card h-100 d-block text-decoration-none" asp-action="Produccion">
+            <h2 class="h5"><i class="bi bi-basket"></i> Producción por lote</h2>
+            <p class="text-muted small mb-0">Cajuelas, kilogramos, merma y rendimiento por lote en un período (HU-28).</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a class="fn-card h-100 d-block text-decoration-none" asp-action="Consolidado">
+            <h2 class="h5"><i class="bi bi-cash-stack"></i> Consolidado financiero</h2>
+            <p class="text-muted small mb-0">Ingresos, gastos y utilidad por período productivo (HU-29).</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a class="fn-card h-100 d-block text-decoration-none" asp-action="CostoPorCajuela">
+            <h2 class="h5"><i class="bi bi-calculator"></i> Costo por cajuela</h2>
+            <p class="text-muted small mb-0">Costo real de producción por unidad para un lote y período (HU-17).</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a class="fn-card h-100 d-block text-decoration-none" asp-controller="Balance" asp-action="Index">
+            <h2 class="h5"><i class="bi bi-graph-up-arrow"></i> Balance de ingresos y egresos</h2>
+            <p class="text-muted small mb-0">Flujo de caja por rango de fechas o período (HU-21).</p>
+        </a>
+    </div>
+</div>

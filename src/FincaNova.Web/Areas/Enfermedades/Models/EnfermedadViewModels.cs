@@ -91,12 +91,21 @@ public class TratamientoFormViewModel
     public string Descripcion { get; set; } = string.Empty;
 
     [StringLength(120)]
-    [Display(Name = "Producto o insumo utilizado")]
+    [Display(Name = "Producto o insumo utilizado (texto libre)")]
     public string? Producto { get; set; }
+
+    [Display(Name = "…o descontar del inventario")]
+    public int? InsumoId { get; set; }
+
+    [Range(0, 1_000_000)]
+    [Display(Name = "Cantidad usada del inventario")]
+    public decimal CantidadInsumo { get; set; }
 
     [StringLength(80)]
     [Display(Name = "Dosis")]
     public string? Dosis { get; set; }
+
+    public IEnumerable<(int Id, string Texto)> Insumos { get; set; } = Enumerable.Empty<(int, string)>();
 
     [DataType(DataType.Date)]
     [Display(Name = "Fecha de aplicación")]

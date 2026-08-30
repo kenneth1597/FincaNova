@@ -72,4 +72,33 @@ public static class Ui
 
     /// <summary>Formatea un peso en kilogramos: <c>1 234,50 kg</c>.</summary>
     public static string Kg(decimal kg) => $"{kg:N2} kg";
+
+    public static string CategoriaGastoTexto(CategoriaGasto c) => c switch
+    {
+        CategoriaGasto.Insumos => "Insumos",
+        CategoriaGasto.ManoDeObra => "Mano de obra",
+        CategoriaGasto.Herramientas => "Herramientas",
+        CategoriaGasto.Transporte => "Transporte",
+        CategoriaGasto.Servicios => "Servicios",
+        CategoriaGasto.Otros => "Otros",
+        _ => c.ToString()
+    };
+
+    public static string TipoInsumoTexto(TipoInsumo t) => t switch
+    {
+        TipoInsumo.Fertilizante => "Fertilizante",
+        TipoInsumo.Fitosanitario => "Fitosanitario / químico",
+        TipoInsumo.Herramienta => "Herramienta",
+        TipoInsumo.MaterialEmpaque => "Material de empaque",
+        TipoInsumo.Otro => "Otro",
+        _ => t.ToString()
+    };
+
+    public static string TipoMovimientoTexto(TipoMovimientoInventario t) => t switch
+    {
+        TipoMovimientoInventario.Entrada => "Entrada",
+        TipoMovimientoInventario.Salida => "Salida",
+        TipoMovimientoInventario.Ajuste => "Ajuste",
+        _ => t.ToString()
+    };
 }

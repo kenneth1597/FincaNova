@@ -1,0 +1,84 @@
+@model BalanceViewModel
+@{
+    ViewData["Title"] = "Balance";
+    var maxCat = Model.GastosPorCategoria.Count > 0 ? Model.GastosPorCategoria.Max(g => g.Monto) : 0m;
+}
+
+<h1 class="fn-page-title"><i class="bi bi-graph-up-arrow"></i> Control de ingresos y egresos</h1>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Período</label>
+            <select name="periodoId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Periodos) { <option value="@id" selected="@(Model.PeriodoId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-primary flex-grow-1"><i class="bi bi-search"></i> Aplicar</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.SinTransacciones)
+{
+    <div class="fn-card text-center text-muted py-4">
+        <i class="bi bi-clipboard-x d-block fs-3 mb-1"></i>
+        No hay transacciones registradas para este período.
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase">Ingresos por ventas</div>
+                <div class="fs-3 fw-bold text-success">@Ui.Money(Model.TotalIngresos)</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase">Gastos totales</div>
+                <div class="fs-3 fw-bold text-danger">@Ui.Money(Model.TotalGastos)</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="fn-card h-100">
+                <div class="text-muted small text-uppercase">Balance neto</div>
+                <div class="fs-3 fw-bold @(Model.BalanceNeto >= 0 ? "text-success" : "text-danger")">@Ui.Money(Model.BalanceNeto)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fn-card mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 text-muted text-uppercase mb-0">Gastos por categoría</h2>
+            <div class="btn-group btn-group-sm">
+                <a class="btn btn-outline-primary" asp-action="Exportar" asp-route-desde="@(Model.Desde?.ToString("yyyy-MM-dd"))" asp-route-hasta="@(Model.Hasta?.ToString("yyyy-MM-dd"))" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="pdf"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+                <a class="btn btn-outline-primary" asp-action="Exportar" asp-route-desde="@(Model.Desde?.ToString("yyyy-MM-dd"))" asp-route-hasta="@(Model.Hasta?.ToString("yyyy-MM-dd"))" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="excel"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+            </div>
+        </div>
+        @foreach (var g in Model.GastosPorCategoria)
+        {
+            var pct = maxCat > 0 ? (double)(g.Monto / maxCat) * 100 : 0;
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <div style="width:120px" class="small">@g.Categoria</div>
+                <div class="flex-grow-1"><div class="bg-primary" style="height:14px;border-radius:7px;width:@(Math.Max(pct, 3).ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+                <div class="small text-end" style="width:110px">@Ui.Money(g.Monto)</div>
+            </div>
+        }
+        @if (Model.GastosPorCategoria.Count == 0)
+        {
+            <p class="text-muted small mb-0">Sin gastos en el rango seleccionado.</p>
+        }
+    </div>
+}

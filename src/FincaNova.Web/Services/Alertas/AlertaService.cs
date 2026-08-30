@@ -18,6 +18,12 @@ public interface IAlertaService
     /// Devuelve la cantidad de detecciones consideradas.
     /// </summary>
     Task<int> VerificarRecurrenciaEnfermedadAsync(int loteId, int tipoEnfermedadId, DateTime referencia, CancellationToken ct = default);
+
+    /// <summary>
+    /// Genera o retira la alerta de stock mínimo de un insumo según su existencia
+    /// actual frente al mínimo configurado (RF-26, HU-25).
+    /// </summary>
+    Task VerificarStockMinimoAsync(int insumoId, CancellationToken ct = default);
 }
 
 public class AlertaService : IAlertaService
@@ -67,5 +73,37 @@ public class AlertaService : IAlertaService
         await _db.SaveChangesAsync(ct);
 
         return detecciones;
+    }
+
+    public async Task VerificarStockMinimoAsync(int insumoId, CancellationToken ct = default)
+    {
+        var insumo = await _db.Insumos.AsNoTracking().FirstOrDefaultAsync(i => i.Id == insumoId, ct);
+        if (insumo is null) return;
+
+        var alertaAbierta = await _db.Alertas
+            .FirstOrDefaultAsync(a => a.Tipo == TipoAlerta.StockMinimo && a.ReferenciaId == insumoId && !a.Atendida, ct);
+
+        var bajoMinimo = insumo.StockActual <= insumo.StockMinimo;
+
+        if (bajoMinimo && alertaAbierta is null)
+        {
+            _db.Alertas.Add(new Alerta
+            {
+                Tipo = TipoAlerta.StockMinimo,
+                ReferenciaId = insumoId,
+                Mensaje = $"El insumo «{insumo.Nombre}» está en {insumo.StockActual:N2} {insumo.UnidadMedida}, " +
+                          $"por debajo del mínimo de {insumo.StockMinimo:N2}. Programe el reabastecimiento.",
+                FechaGeneracion = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync(ct);
+        }
+        else if (!bajoMinimo && alertaAbierta is not null)
+        {
+            // Se reabasteció: la alerta se retira automáticamente.
+            alertaAbierta.Atendida = true;
+            alertaAbierta.FechaAtencion = DateTime.UtcNow;
+            alertaAbierta.AtendidaPor = "sistema (reabastecido)";
+            await _db.SaveChangesAsync(ct);
+        }
     }
 }

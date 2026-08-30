@@ -1,0 +1,56 @@
+@model ReporteProduccionViewModel
+@{ ViewData["Title"] = "Reporte de producción"; }
+
+<h1 class="fn-page-title"><i class="bi bi-basket"></i> Reporte de producción por lote</h1>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-8 col-md-5">
+            <label class="form-label small text-muted">Período productivo</label>
+            <select name="periodoId" class="form-select">
+                @foreach (var (id, t) in Model.Periodos) { <option value="@id" selected="@(Model.PeriodoId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-4 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Ver</button>
+        </div>
+        @if (Model.Calculado)
+        {
+            <div class="col-12 col-md-5 d-flex gap-2 justify-content-md-end">
+                <a class="btn btn-outline-primary" asp-action="Produccion" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="pdf"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+                <a class="btn btn-outline-primary" asp-action="Produccion" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="excel"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+            </div>
+        }
+    </div>
+</form>
+
+@if (Model.Calculado)
+{
+    <div class="fn-card p-0">
+        <div class="table-responsive">
+            <table class="table fn-table align-middle mb-0">
+                <thead>
+                    <tr><th>Lote</th><th class="text-end">Cajuelas</th><th class="text-end">Recolectado</th><th class="text-end">Café seco</th><th class="text-end">Procesado</th><th class="text-end">Merma</th><th class="text-end">Rendimiento</th></tr>
+                </thead>
+                <tbody>
+                @if (Model.Filas.Count == 0)
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-4">No hay datos de producción para este período.</td></tr>
+                }
+                @foreach (var f in Model.Filas)
+                {
+                    <tr>
+                        <td class="fw-semibold">@f.Lote</td>
+                        <td class="text-end">@f.Cajuelas.ToString("N2")</td>
+                        <td class="text-end">@Ui.Kg(f.KgRecolectado)</td>
+                        <td class="text-end">@Ui.Kg(f.KgSeco)</td>
+                        <td class="text-end">@Ui.Kg(f.KgProcesado)</td>
+                        <td class="text-end">@f.MermaPct.ToString("N1")%</td>
+                        <td class="text-end">@f.RendimientoPct.ToString("N1")%</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

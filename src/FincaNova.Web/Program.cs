@@ -1,12 +1,17 @@
 using FincaNova.Web.Data;
 using FincaNova.Web.Domain;
 using FincaNova.Web.Services.Alertas;
+using FincaNova.Web.Services.Archivos;
 using FincaNova.Web.Services.Auditoria;
 using FincaNova.Web.Services.Catalogos;
 using FincaNova.Web.Services.Email;
+using FincaNova.Web.Services.Reportes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+// Licencia comunitaria de QuestPDF (uso permitido para organizaciones pequeñas / académico).
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +79,8 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IEmailSender, FileEmailSender>();
 builder.Services.AddScoped<ICatalogoService, CatalogoService>();
 builder.Services.AddScoped<IAlertaService, AlertaService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddSingleton<IReporteExportService, ReporteExportService>();
 
 var app = builder.Build();
 

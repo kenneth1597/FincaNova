@@ -12,6 +12,7 @@ Poás, Alajuela). Proyecto académico — Universidad Fidélitas, cursos SC-702 
 | Datos | Entity Framework Core 8 + **SQL Server** |
 | Seguridad | ASP.NET Core Identity (roles: Administrador, Caficultor, Trabajador) |
 | UI | Razor + Bootstrap 5 + Bootstrap Icons |
+| Reportes | QuestPDF (PDF) + ClosedXML (Excel) |
 
 ## Requisitos
 
@@ -115,6 +116,20 @@ src/FincaNova.Web/
   - La recolección alimenta la parte de cajuelas de la planilla; recolección y
     producción aparecen en la bitácora del lote.
 - [ ] **Hito 6** — Ingresos, gastos, inventario, reportes PDF/Excel
+- [x] **Hito 6 — Finanzas, inventario y reportes** *(commit `Hito 6`)*
+  - Gastos: CRUD con categoría, validación de monto > 0 y comprobante adjunto
+    (PDF/JPG/PNG ≤ 5 MB) almacenado fuera de wwwroot y servido con autorización.
+  - Ventas de café: CRUD con total automático (cantidad × precio) y vista previa.
+  - Balance de ingresos y egresos: filtros por fecha o período, balance neto,
+    gastos por categoría y exportación a PDF y Excel.
+  - Inventario de insumos: CRUD, movimientos (entrada/salida/ajuste), fecha de
+    vencimiento obligatoria para fitosanitarios, buscador en tiempo real y
+    resaltado de existencias bajo el mínimo.
+  - Descuento automático de inventario al registrar un tratamiento fitosanitario,
+    con bloqueo por existencias insuficientes.
+  - Alerta automática de stock mínimo (y retiro automático al reabastecer).
+  - Reportes exportables a PDF/Excel: producción por lote, consolidado financiero
+    por período y costo real por cajuela (con manejo de producción cero).
 - [ ] **Hito 7** — Dashboard de indicadores
 
 La documentación funcional del proyecto está en `OneDrive_1_29-8-2026/`.

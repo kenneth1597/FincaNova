@@ -31,6 +31,20 @@
                 <label asp-for="FechaAplicacion" class="form-label"></label>
                 <input asp-for="FechaAplicacion" class="form-control" type="date" />
             </div>
+
+            <div class="col-12"><hr class="my-1" /><span class="form-text">Opcional: descontar el producto del inventario (HU-24).</span></div>
+            <div class="col-md-7">
+                <label asp-for="InsumoId" class="form-label"></label>
+                <select asp-for="InsumoId" class="form-select">
+                    <option value="">— No descontar del inventario —</option>
+                    @foreach (var (id, t) in Model.Insumos) { <option value="@id">@t</option> }
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="CantidadInsumo" class="form-label"></label>
+                <input asp-for="CantidadInsumo" class="form-control" type="number" step="0.0001" min="0" />
+                <span asp-validation-for="CantidadInsumo" class="text-danger small"></span>
+            </div>
             <div class="col-12">
                 <label asp-for="ResultadoObservado" class="form-label"></label>
                 <textarea asp-for="ResultadoObservado" class="form-control" rows="2"></textarea>

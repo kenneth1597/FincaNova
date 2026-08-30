@@ -1,0 +1,85 @@
+@model GastoFiltroViewModel
+@{
+    ViewData["Title"] = "Gastos";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-receipt"></i> Gastos de la finca</h1>
+    <a class="btn btn-primary" asp-action="Crear"><i class="bi bi-plus-lg"></i> Registrar gasto</a>
+</div>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Categoría</label>
+            <select name="categoria" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var cat in Enum.GetValues<CategoriaGasto>())
+                {
+                    <option value="@((int)cat)" selected="@(Model.Categoria == cat)">@Ui.CategoriaGastoTexto(cat)</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Lote</label>
+            <select name="loteId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Lotes) { <option value="@id" selected="@(Model.LoteId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr><th>Fecha</th><th>Categoría</th><th>Descripción</th><th>Lote</th><th class="text-end">Monto</th><th></th></tr>
+            </thead>
+            <tbody>
+            @if (Model.Resultados.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-receipt d-block fs-3 mb-1"></i>No hay gastos con esos criterios.</td></tr>
+            }
+            @foreach (var g in Model.Resultados)
+            {
+                <tr>
+                    <td>@g.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td><span class="badge bg-secondary fn-badge-estado">@Ui.CategoriaGastoTexto(g.Categoria)</span></td>
+                    <td>
+                        @g.Descripcion
+                        @if (g.TieneComprobante)
+                        {
+                            <a class="ms-1" asp-action="Comprobante" asp-route-id="@g.Id" target="_blank" title="Ver comprobante"><i class="bi bi-paperclip"></i></a>
+                        }
+                    </td>
+                    <td>@(g.Lote ?? "—")</td>
+                    <td class="text-end">@Ui.Money(g.Monto)</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@g.Id"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Eliminar" asp-route-id="@g.Id" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar este gasto?');">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+            @if (Model.Resultados.Count > 0)
+            {
+                <tfoot><tr class="fw-bold"><td colspan="4" class="text-end">Total</td><td class="text-end">@Ui.Money(Model.Total)</td><td></td></tr></tfoot>
+            }
+        </table>
+    </div>
+</div>

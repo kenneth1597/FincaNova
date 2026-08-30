@@ -1,0 +1,67 @@
+@model InsumoDetalleViewModel
+@{
+    var i = Model.Insumo;
+    ViewData["Title"] = i.Nombre;
+    var puedeGestionar = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <div>
+        <h1 class="fn-page-title mb-1"><i class="bi bi-box-seam"></i> @i.Nombre</h1>
+        <span class="text-muted small">@Ui.TipoInsumoTexto(i.Tipo)</span>
+        @if (i.BajoStockMinimo)
+        {
+            <span class="badge bg-danger ms-1"><i class="bi bi-exclamation-triangle"></i> Stock por debajo del mínimo</span>
+        }
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+        @if (puedeGestionar)
+        {
+            <a asp-action="Editar" asp-route-id="@i.Id" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+            <a asp-action="Movimiento" asp-route-insumoId="@i.Id" class="btn btn-primary btn-sm"><i class="bi bi-arrow-down-up"></i> Movimiento</a>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Existencias</h2>
+            <dl class="row mb-0 small">
+                <dt class="col-6">Stock actual</dt><dd class="col-6 fw-bold text-primary">@i.StockActual.ToString("N2") @i.UnidadMedida</dd>
+                <dt class="col-6">Stock mínimo</dt><dd class="col-6">@i.StockMinimo.ToString("N2")</dd>
+                <dt class="col-6">Vencimiento</dt><dd class="col-6">@(i.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "—")</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="fn-card h-100 p-0">
+            <h2 class="h6 text-muted text-uppercase p-3 pb-0">Movimientos</h2>
+            <div class="table-responsive">
+                <table class="table fn-table align-middle mb-0">
+                    <thead><tr><th>Fecha</th><th>Tipo</th><th class="text-end">Cantidad</th><th>Motivo</th></tr></thead>
+                    <tbody>
+                    @if (Model.Movimientos.Count == 0)
+                    {
+                        <tr><td colspan="4" class="text-center text-muted py-3">Sin movimientos registrados.</td></tr>
+                    }
+                    @foreach (var m in Model.Movimientos)
+                    {
+                        <tr>
+                            <td>@m.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="badge bg-@(m.Tipo == TipoMovimientoInventario.Entrada ? "success" : m.Tipo == TipoMovimientoInventario.Salida ? "danger" : "secondary") fn-badge-estado">
+                                    @Ui.TipoMovimientoTexto(m.Tipo)
+                                </span>
+                            </td>
+                            <td class="text-end">@m.Cantidad.ToString("N2")</td>
+                            <td class="small">@m.Motivo</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

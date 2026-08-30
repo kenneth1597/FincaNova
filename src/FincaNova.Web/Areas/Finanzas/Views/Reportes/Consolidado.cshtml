@@ -1,0 +1,37 @@
+@model BalanceViewModel
+@{ ViewData["Title"] = "Consolidado financiero"; }
+
+<h1 class="fn-page-title"><i class="bi bi-cash-stack"></i> Consolidado de ingresos y gastos</h1>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-8 col-md-5">
+            <label class="form-label small text-muted">Período productivo</label>
+            <select name="periodoId" class="form-select">
+                @foreach (var (id, t) in Model.Periodos) { <option value="@id" selected="@(Model.PeriodoId == id)">@t</option> }
+            </select>
+        </div>
+        <div class="col-4 col-md-2 d-grid"><button type="submit" class="btn btn-primary">Ver</button></div>
+        @if (Model.Calculado)
+        {
+            <div class="col-12 col-md-5 d-flex gap-2 justify-content-md-end">
+                <a class="btn btn-outline-primary" asp-action="Consolidado" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="pdf"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+                <a class="btn btn-outline-primary" asp-action="Consolidado" asp-route-periodoId="@Model.PeriodoId" asp-route-formato="excel"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+            </div>
+        }
+    </div>
+</form>
+
+@if (Model.Calculado)
+{
+    <div class="fn-card" style="max-width:520px">
+        <h2 class="h6 text-muted text-uppercase">@Model.PeriodoNombre</h2>
+        <table class="table mb-0">
+            <tbody>
+                <tr><td>Ingresos</td><td class="text-end text-success fw-semibold">@Ui.Money(Model.TotalIngresos)</td></tr>
+                <tr><td>Gastos</td><td class="text-end text-danger fw-semibold">@Ui.Money(Model.TotalGastos)</td></tr>
+                <tr class="fw-bold border-top"><td>Utilidad</td><td class="text-end @(Model.BalanceNeto >= 0 ? "text-success" : "text-danger")">@Ui.Money(Model.BalanceNeto)</td></tr>
+            </tbody>
+        </table>
+    </div>
+}
