@@ -12,7 +12,8 @@
 }
 <nav class="fn-sidebar" id="fnSidebar">
     <div class="fn-sidebar__brand">
-        <i class="bi bi-tree-fill"></i> FincaNova
+        <partial name="_BrandLogo" />
+        FincaNova
     </div>
     <div class="fn-sidebar__nav">
         <a class="fn-sidebar__link @Active("", "Home")" asp-area="" asp-controller="Home" asp-action="Index">
@@ -21,7 +22,7 @@
 
         <div class="fn-sidebar__section">Operación</div>
         <a class="fn-sidebar__link @Active("Lotes", "Lotes")" asp-area="Lotes" asp-controller="Lotes" asp-action="Index">
-            <i class="bi bi-grid-3x3-gap"></i> Lotes y micro lotes
+            <i class="bi bi-map"></i> Lotes y micro lotes
         </a>
         <a class="fn-sidebar__link @Active("Labores", "Labores")" asp-area="Labores" asp-controller="Labores" asp-action="Index">
             <i class="bi bi-tools"></i> Registro de labores

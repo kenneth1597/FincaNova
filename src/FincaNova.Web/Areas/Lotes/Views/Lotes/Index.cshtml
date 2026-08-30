@@ -1,0 +1,125 @@
+@model LoteFiltroViewModel
+@{
+    ViewData["Title"] = "Lotes y micro lotes";
+    var puedeGestionar = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor);
+    int Conteo(EstadoLote e) => Model.Conteos.TryGetValue(e, out var n) ? n : 0;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-map"></i> Lotes y micro lotes</h1>
+    @if (puedeGestionar)
+    {
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" asp-action="Crear" asp-route-tipo="@((int)TipoLote.MicroLote)">
+                <i class="bi bi-diagram-3"></i> Nuevo micro lote
+            </a>
+            <a class="btn btn-primary" asp-action="Crear">
+                <i class="bi bi-plus-lg"></i> Nuevo lote
+            </a>
+        </div>
+    }
+</div>
+
+<div class="row g-2 mb-3">
+    @foreach (var e in new[] { EstadoLote.Activo, EstadoLote.EnProduccion, EstadoLote.EnDescanso, EstadoLote.Inactivo })
+    {
+        <div class="col-6 col-lg-3">
+            <a asp-action="Index" asp-route-estado="@((int)e)"
+               class="fn-card d-block text-decoration-none h-100 @(Model.Estado == e ? "border-2 border-success" : "")">
+                <div class="text-muted small text-uppercase">@Ui.EstadoLoteTexto(e)</div>
+                <div class="fs-3 fw-bold text-@Ui.EstadoLoteColor(e)">@Conteo(e)</div>
+            </a>
+        </div>
+    }
+</div>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-5">
+            <label class="form-label small text-muted">Buscar por código o nombre</label>
+            <input type="text" name="q" value="@Model.Q" class="form-control" placeholder="Ej. LOTE-01 o Lote Norte" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Tipo</label>
+            <select name="tipo" class="form-select">
+                <option value="">Todos</option>
+                <option value="@((int)TipoLote.Lote)" selected="@(Model.Tipo == TipoLote.Lote)">Lote</option>
+                <option value="@((int)TipoLote.MicroLote)" selected="@(Model.Tipo == TipoLote.MicroLote)">Micro lote</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Estado</label>
+            <select name="estado" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var e in Enum.GetValues<EstadoLote>())
+                {
+                    <option value="@((int)e)" selected="@(Model.Estado == e)">@Ui.EstadoLoteTexto(e)</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Variedad</th>
+                    <th class="text-end">Área (ha)</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Resultados.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-muted py-4">
+                    <i class="bi bi-cup-hot d-block fs-3 mb-1"></i>
+                    No hay lotes que coincidan con los criterios.
+                </td></tr>
+            }
+            @foreach (var l in Model.Resultados)
+            {
+                <tr>
+                    <td class="fw-semibold">
+                        <a asp-action="Detalle" asp-route-id="@l.Id" class="text-decoration-none">@l.Codigo</a>
+                    </td>
+                    <td>
+                        @l.Nombre
+                        @if (l.Tipo == TipoLote.MicroLote && l.LotePadre != null)
+                        {
+                            <span class="text-muted small d-block"><i class="bi bi-diagram-3"></i> de @l.LotePadre</span>
+                        }
+                        else if (l.MicroLotes > 0)
+                        {
+                            <span class="text-muted small d-block">@l.MicroLotes micro lote(s)</span>
+                        }
+                    </td>
+                    <td>@Ui.TipoLoteTexto(l.Tipo)</td>
+                    <td>@(string.IsNullOrEmpty(l.VariedadCafe) ? "—" : l.VariedadCafe)</td>
+                    <td class="text-end">@l.AreaHectareas.ToString("N2")</td>
+                    <td><span class="badge bg-@Ui.EstadoLoteColor(l.Estado) fn-badge-estado">@Ui.EstadoLoteTexto(l.Estado)</span></td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@l.Id" title="Ver detalle">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        @if (puedeGestionar)
+                        {
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@l.Id" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

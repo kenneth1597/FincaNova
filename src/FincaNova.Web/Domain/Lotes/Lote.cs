@@ -45,6 +45,10 @@ public class Lote : AuditableEntity
 
     public DateTime? FechaUltimoCambioEstado { get; set; }
 
+    /// <summary>Usuario que realizó el último cambio de estado (HU-39 esc. 2).</summary>
+    [StringLength(256)]
+    public string? EstadoCambiadoPor { get; set; }
+
     [StringLength(500)]
     public string? Observaciones { get; set; }
 

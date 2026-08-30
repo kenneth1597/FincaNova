@@ -95,6 +95,11 @@ a { color: var(--fn-primary-dark); }
     border-bottom: 1px solid rgba(255,255,255,.15);
 }
 .fn-sidebar__brand i { font-size: 1.4rem; }
+
+/* Logotipo (grano de café) */
+.fn-logo { width: 1.3em; height: 1.3em; flex-shrink: 0; vertical-align: -0.28em; }
+.fn-sidebar__brand .fn-logo { display: block; width: 1.55rem; height: 1.55rem; vertical-align: baseline; }
+.fn-auth__brand .fn-logo { display: block; width: 2.1rem; height: 2.1rem; margin: 0 auto .3rem; vertical-align: baseline; }
 .fn-sidebar__nav { padding: .75rem .6rem; overflow-y: auto; flex-grow: 1; }
 .fn-sidebar__section {
     font-size: .68rem; text-transform: uppercase; letter-spacing: .09em;
@@ -153,12 +158,25 @@ a { color: var(--fn-primary-dark); }
 
 /* ----- Pantalla de autenticación ----- */
 .fn-auth {
+    position: relative;
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, var(--fn-primary-dark), var(--fn-primary-light));
     padding: 1rem;
+    overflow: hidden;
 }
+.fn-auth__bg {
+    position: absolute; inset: 0;
+    pointer-events: none;
+}
+.fn-auth__bg svg {
+    position: absolute;
+    height: 115%;
+    top: -7%;
+}
+.fn-auth__bg svg:first-child { left: -4%; transform: rotate(-8deg); }
 .fn-auth__card {
+    position: relative;
     background: var(--fn-bg);
     width: 100%; max-width: 400px;
     border-radius: .9rem;
@@ -175,3 +193,21 @@ a { color: var(--fn-primary-dark); }
 .fn-badge-estado { font-size: .75rem; font-weight: 600; }
 table.fn-table thead th { background: #eef3ee; color: var(--fn-primary-dark); border-bottom: 2px solid var(--fn-primary-light); }
 .footer-note { color: var(--fn-muted); font-size: .8rem; }
+
+/* ----- Línea de tiempo (bitácora del lote) ----- */
+.fn-timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+.fn-timeline::before {
+    content: ""; position: absolute; left: 15px; top: 4px; bottom: 4px;
+    width: 2px; background: var(--fn-border);
+}
+.fn-timeline > li {
+    position: relative; padding: 0 0 1rem 2.6rem; min-height: 2rem;
+}
+.fn-timeline__dot {
+    position: absolute; left: 0; top: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: .9rem;
+    box-shadow: 0 0 0 3px var(--fn-bg);
+}
+.fn-timeline > li:last-child { padding-bottom: 0; }
