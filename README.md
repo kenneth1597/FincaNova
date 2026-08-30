@@ -81,6 +81,17 @@ src/FincaNova.Web/
   - Identidad visual cafetalera: logotipo de grano de café, favicon, ilustración de
     rama de café en el acceso, íconos y línea de tiempo temáticos.
 - [ ] **Hito 3** — Registro de labores + colaboradores + planilla
+- [x] **Hito 3 — Registro de labores, colaboradores y planilla** *(commit `Hito 3`)*
+  - Colaboradores: CRUD con identificación única, tarifas por jornada/hora/cajuela,
+    activar/inactivar, búsqueda y detalle con historial de participación.
+  - Registro de labores agrícolas con lote, período, modalidad (jornada u hora),
+    cantidad y varios colaboradores; validaciones de campos, duración > 0 y al menos
+    un colaborador. El Trabajador también puede registrar.
+  - Cálculo automático del costo por colaborador (tarifa propia o tarifa única), con
+    vista previa en vivo y desglose guardado por participante.
+  - Planilla por colaborador y período: total a pagar con su desglose (la parte de
+    recolección se activa en el Hito 5).
+  - Las labores aparecen en la bitácora del lote.
 - [ ] **Hito 4** — Control de enfermedades + tratamientos + alertas
 - [ ] **Hito 5** — Recolección y producción + merma
 - [ ] **Hito 6** — Ingresos, gastos, inventario, reportes PDF/Excel
