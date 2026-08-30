@@ -1,0 +1,60 @@
+@model LaborDetalleViewModel
+@{
+    var l = Model.Labor;
+    ViewData["Title"] = $"Labor · {l.TipoLabor}";
+    var cantidad = l.Modalidad == ModalidadPago.PorHora ? l.DuracionHoras : l.Jornadas;
+    var puedeGestionar = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Caficultor);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-tools"></i> @l.TipoLabor</h1>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+        <a asp-action="Editar" asp-route-id="@l.Id" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+        @if (puedeGestionar)
+        {
+            <form asp-action="Eliminar" asp-route-id="@l.Id" method="post" class="d-inline"
+                  onsubmit="return confirm('¿Eliminar esta labor? Esta acción no se puede deshacer.');">
+                @Html.AntiForgeryToken()
+                <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</button>
+            </form>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Datos de la labor</h2>
+            <dl class="row mb-0 small">
+                <dt class="col-5">Lote</dt><dd class="col-7">@Model.Lote</dd>
+                <dt class="col-5">Fecha</dt><dd class="col-7">@l.Fecha.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-5">Período</dt><dd class="col-7">@(Model.Periodo ?? "—")</dd>
+                <dt class="col-5">Modalidad</dt><dd class="col-7">@Ui.ModalidadPagoTexto(l.Modalidad)</dd>
+                <dt class="col-5">Cantidad</dt><dd class="col-7">@cantidad.ToString("N2") @(l.Modalidad == ModalidadPago.PorHora ? "horas" : "jornadas") por colaborador</dd>
+                <dt class="col-5">Costo total</dt><dd class="col-7 fw-bold text-primary">@l.CostoCalculado.ToString("N2")</dd>
+            </dl>
+            @if (!string.IsNullOrEmpty(l.Observaciones))
+            {
+                <hr /><p class="small mb-0">@l.Observaciones</p>
+            }
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="fn-card h-100 p-0">
+            <h2 class="h6 text-muted text-uppercase p-3 pb-0">Desglose por colaborador (HU-02, HU-03)</h2>
+            <div class="table-responsive">
+                <table class="table fn-table align-middle mb-0">
+                    <thead><tr><th>Colaborador</th><th class="text-end">Cantidad</th><th class="text-end">Costo</th></tr></thead>
+                    <tbody>
+                    @foreach (var d in Model.Desglose)
+                    {
+                        <tr><td>@d.Colaborador</td><td class="text-end">@d.Cantidad.ToString("N2")</td><td class="text-end">@d.Costo.ToString("N2")</td></tr>
+                    }
+                    </tbody>
+                    <tfoot><tr class="fw-bold"><td class="text-end" colspan="2">Total</td><td class="text-end">@l.CostoCalculado.ToString("N2")</td></tr></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

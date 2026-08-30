@@ -1,0 +1,103 @@
+@model PlanillaViewModel
+@{
+    ViewData["Title"] = "Planilla";
+}
+
+<h1 class="fn-page-title"><i class="bi bi-cash-stack"></i> Planilla por colaborador y período</h1>
+<p class="text-muted">Calcula automáticamente el monto a pagar sumando las jornadas y horas de labores y las cajuelas recolectadas del colaborador en el período seleccionado (HU-06, RF-15).</p>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-5">
+            <label class="form-label small text-muted">Colaborador</label>
+            <select name="colaboradorId" class="form-select">
+                <option value="">— Seleccione —</option>
+                @foreach (var (id, t) in Model.ColaboradoresDisponibles)
+                {
+                    <option value="@id" selected="@(Model.ColaboradorId == id)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-5">
+            <label class="form-label small text-muted">Período productivo</label>
+            <select name="periodoId" class="form-select">
+                <option value="">— Seleccione —</option>
+                @foreach (var (id, t) in Model.PeriodosDisponibles)
+                {
+                    <option value="@id" selected="@(Model.PeriodoId == id)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-calculator"></i> Calcular</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Calculada)
+{
+    <div class="fn-card mb-3">
+        <h2 class="h5 mb-3">@Model.ColaboradorNombre — @Model.PeriodoNombre</h2>
+
+        <h3 class="h6 text-muted text-uppercase">Labores</h3>
+        <div class="table-responsive mb-3">
+            <table class="table fn-table align-middle mb-0">
+                <thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th>Modalidad</th><th class="text-end">Cantidad</th><th class="text-end">Costo</th></tr></thead>
+                <tbody>
+                @if (Model.Labores.Count == 0)
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-3">Sin labores en el período.</td></tr>
+                }
+                @foreach (var l in Model.Labores)
+                {
+                    <tr>
+                        <td>@l.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@l.Lote</td>
+                        <td>@l.TipoLabor</td>
+                        <td>@l.Modalidad</td>
+                        <td class="text-end">@l.Cantidad.ToString("N2")</td>
+                        <td class="text-end">@l.Costo.ToString("N2")</td>
+                    </tr>
+                }
+                </tbody>
+                <tfoot><tr class="fw-semibold"><td colspan="5" class="text-end">Subtotal labores</td><td class="text-end">@Model.SubtotalLabores.ToString("N2")</td></tr></tfoot>
+            </table>
+        </div>
+
+        <h3 class="h6 text-muted text-uppercase">Recolección</h3>
+        <div class="table-responsive mb-3">
+            <table class="table fn-table align-middle mb-0">
+                <thead><tr><th>Fecha</th><th>Lote</th><th class="text-end">Cajuelas</th><th class="text-end">Tarifa</th><th class="text-end">Monto</th></tr></thead>
+                <tbody>
+                @if (Model.Recolecciones.Count == 0)
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-3">Sin recolecciones registradas (módulo disponible en el Hito 5).</td></tr>
+                }
+                @foreach (var r in Model.Recolecciones)
+                {
+                    <tr>
+                        <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@r.Lote</td>
+                        <td class="text-end">@r.Cajuelas.ToString("N2")</td>
+                        <td class="text-end">@r.Tarifa.ToString("N2")</td>
+                        <td class="text-end">@r.Monto.ToString("N2")</td>
+                    </tr>
+                }
+                </tbody>
+                <tfoot><tr class="fw-semibold"><td colspan="4" class="text-end">Subtotal recolección</td><td class="text-end">@Model.SubtotalRecoleccion.ToString("N2")</td></tr></tfoot>
+            </table>
+        </div>
+
+        <div class="alert alert-success d-flex justify-content-between align-items-center mb-0">
+            <span class="fw-bold"><i class="bi bi-cash-coin"></i> Total a pagar</span>
+            <span class="fs-4 fw-bold">@Model.Total.ToString("N2")</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="fn-card text-center text-muted py-4">
+        <i class="bi bi-cup-hot d-block fs-3 mb-1"></i>
+        Seleccione un colaborador y un período para calcular la planilla.
+    </div>
+}

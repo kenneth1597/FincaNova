@@ -27,6 +27,15 @@
         <a class="fn-sidebar__link @Active("Labores", "Labores")" asp-area="Labores" asp-controller="Labores" asp-action="Index">
             <i class="bi bi-tools"></i> Registro de labores
         </a>
+        @if (esGestion)
+        {
+            <a class="fn-sidebar__link @Active("Labores", "Colaboradores")" asp-area="Labores" asp-controller="Colaboradores" asp-action="Index">
+                <i class="bi bi-person-badge"></i> Colaboradores
+            </a>
+            <a class="fn-sidebar__link @Active("Labores", "Planilla")" asp-area="Labores" asp-controller="Planilla" asp-action="Index">
+                <i class="bi bi-cash-stack"></i> Planilla
+            </a>
+        }
         <a class="fn-sidebar__link @Active("Enfermedades", "Enfermedades")" asp-area="Enfermedades" asp-controller="Enfermedades" asp-action="Index">
             <i class="bi bi-bug"></i> Control de enfermedades
         </a>

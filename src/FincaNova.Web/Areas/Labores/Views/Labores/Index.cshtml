@@ -1,0 +1,99 @@
+@model LaborFiltroViewModel
+@{
+    ViewData["Title"] = "Registro de labores";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="fn-page-title mb-0"><i class="bi bi-tools"></i> Registro de labores</h1>
+    <a class="btn btn-primary" asp-action="Crear"><i class="bi bi-plus-lg"></i> Registrar labor</a>
+</div>
+
+<form method="get" class="fn-card mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Lote</label>
+            <select name="loteId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Lotes)
+                {
+                    <option value="@id" selected="@(Model.LoteId == id)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label small text-muted">Período</label>
+            <select name="periodoId" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var (id, t) in Model.Periodos)
+                {
+                    <option value="@id" selected="@(Model.PeriodoId == id)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<div class="fn-card p-0">
+    <div class="table-responsive">
+        <table class="table fn-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Lote</th>
+                    <th>Labor</th>
+                    <th>Modalidad</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Colab.</th>
+                    <th class="text-end">Costo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.Resultados.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-muted py-4">
+                    <i class="bi bi-clipboard-check d-block fs-3 mb-1"></i>
+                    No hay labores registradas con esos criterios.
+                </td></tr>
+            }
+            @foreach (var l in Model.Resultados)
+            {
+                <tr>
+                    <td>@l.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@l.Lote</td>
+                    <td class="fw-semibold">@l.TipoLabor</td>
+                    <td>@Ui.ModalidadPagoTexto(l.Modalidad)</td>
+                    <td class="text-end">@l.Cantidad.ToString("N2")</td>
+                    <td class="text-end">@l.Colaboradores</td>
+                    <td class="text-end">@l.CostoCalculado.ToString("N2")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@l.Id"><i class="bi bi-eye"></i></a>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@l.Id"><i class="bi bi-pencil"></i></a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+            @if (Model.Resultados.Count > 0)
+            {
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="6" class="text-end">Total</td>
+                        <td class="text-end">@Model.TotalCosto.ToString("N2")</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
+</div>

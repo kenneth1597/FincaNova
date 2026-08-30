@@ -47,7 +47,11 @@ public class Labor : AuditableEntity
     public ICollection<LaborColaborador> Colaboradores { get; set; } = new List<LaborColaborador>();
 }
 
-/// <summary>Relación N:N entre una labor y los colaboradores que la ejecutaron (HU-03).</summary>
+/// <summary>
+/// Relación N:N entre una labor y los colaboradores que la ejecutaron (HU-03).
+/// Guarda la cantidad (jornadas u horas) y el costo atribuido a cada colaborador,
+/// para que la planilla sea una simple suma (HU-06).
+/// </summary>
 public class LaborColaborador
 {
     public int LaborId { get; set; }
@@ -57,4 +61,10 @@ public class LaborColaborador
     public int ColaboradorId { get; set; }
 
     public Colaborador Colaborador { get; set; } = null!;
+
+    /// <summary>Jornadas u horas que aportó este colaborador a la labor.</summary>
+    public decimal Cantidad { get; set; }
+
+    /// <summary>Monto correspondiente a este colaborador por esta labor.</summary>
+    public decimal Costo { get; set; }
 }

@@ -1,0 +1,58 @@
+@model ColaboradorDetalleViewModel
+@{
+    var c = Model.Colaborador;
+    ViewData["Title"] = c.Nombre;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <div>
+        <h1 class="fn-page-title mb-1"><i class="bi bi-person-badge"></i> @c.Nombre</h1>
+        <span class="badge bg-@Ui.EstadoColaboradorColor(c.Estado) fn-badge-estado">@Ui.EstadoColaboradorTexto(c.Estado)</span>
+        <span class="text-muted small">· @c.Identificacion @(string.IsNullOrEmpty(c.Cargo) ? "" : $"· {c.Cargo}")</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a>
+        <a asp-action="Editar" asp-route-id="@c.Id" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i> Editar</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="fn-card h-100">
+            <h2 class="h6 text-muted text-uppercase">Datos y tarifas</h2>
+            <dl class="row mb-0 small">
+                <dt class="col-6">Teléfono</dt><dd class="col-6">@(c.Telefono ?? "—")</dd>
+                <dt class="col-6">Tarifa jornada</dt><dd class="col-6">@c.TarifaJornada.ToString("N2")</dd>
+                <dt class="col-6">Tarifa hora</dt><dd class="col-6">@c.TarifaHora.ToString("N2")</dd>
+                <dt class="col-6">Tarifa cajuela</dt><dd class="col-6">@c.TarifaCajuela.ToString("N2")</dd>
+                <dt class="col-6">Total acumulado</dt><dd class="col-6 fw-bold text-primary">@Model.TotalAcumulado.ToString("N2")</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="fn-card h-100 p-0">
+            <h2 class="h6 text-muted text-uppercase p-3 pb-0">Historial de labores (HU-05)</h2>
+            <div class="table-responsive">
+                <table class="table fn-table align-middle mb-0">
+                    <thead><tr><th>Fecha</th><th>Lote</th><th>Labor</th><th class="text-end">Cantidad</th><th class="text-end">Costo</th></tr></thead>
+                    <tbody>
+                    @if (Model.Historial.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-4">Todavía no ha participado en labores registradas.</td></tr>
+                    }
+                    @foreach (var h in Model.Historial)
+                    {
+                        <tr>
+                            <td>@h.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@h.Lote</td>
+                            <td>@h.TipoLabor</td>
+                            <td class="text-end">@h.Cantidad.ToString("N2")</td>
+                            <td class="text-end">@h.Costo.ToString("N2")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

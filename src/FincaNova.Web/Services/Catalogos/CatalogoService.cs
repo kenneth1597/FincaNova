@@ -18,6 +18,8 @@ public interface ICatalogoService
     Task<IReadOnlyList<(int Id, string Texto)>> PeriodosAsync(CancellationToken ct = default);
 
     Task<int?> PeriodoActivoIdAsync(CancellationToken ct = default);
+
+    Task<IReadOnlyList<(int Id, string Texto)>> ColaboradoresActivosAsync(CancellationToken ct = default);
 }
 
 public class CatalogoService : ICatalogoService
@@ -50,4 +52,14 @@ public class CatalogoService : ICatalogoService
 
     public async Task<int?> PeriodoActivoIdAsync(CancellationToken ct = default)
         => await _db.PeriodosProductivos.Where(p => p.Activo).Select(p => (int?)p.Id).FirstOrDefaultAsync(ct);
+
+    public async Task<IReadOnlyList<(int Id, string Texto)>> ColaboradoresActivosAsync(CancellationToken ct = default)
+    {
+        var cols = await _db.Colaboradores.AsNoTracking()
+            .Where(c => c.Estado == EstadoColaborador.Activo)
+            .OrderBy(c => c.Nombre)
+            .Select(c => new { c.Id, c.Nombre, c.Identificacion })
+            .ToListAsync(ct);
+        return cols.Select(c => (c.Id, $"{c.Nombre} ({c.Identificacion})")).ToList();
+    }
 }

@@ -1,0 +1,47 @@
+@model ColaboradorFormViewModel
+
+<div class="row g-3">
+    <div class="col-md-7">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger small"></span>
+    </div>
+    <div class="col-md-5">
+        <label asp-for="Identificacion" class="form-label"></label>
+        <input asp-for="Identificacion" class="form-control" placeholder="1-1234-5678" />
+        <span asp-validation-for="Identificacion" class="text-danger small"></span>
+    </div>
+    <div class="col-md-5">
+        <label asp-for="Telefono" class="form-label"></label>
+        <input asp-for="Telefono" class="form-control" />
+        <span asp-validation-for="Telefono" class="text-danger small"></span>
+    </div>
+    <div class="col-md-7">
+        <label asp-for="Cargo" class="form-label"></label>
+        <input asp-for="Cargo" class="form-control" list="cargos" placeholder="Ej. Peón, Recolector, Capataz" />
+        <datalist id="cargos">
+            <option value="Peón"></option>
+            <option value="Recolector"></option>
+            <option value="Capataz"></option>
+            <option value="Operario"></option>
+        </datalist>
+    </div>
+
+    <div class="col-12"><hr class="my-1" /><span class="form-text">Tarifas usadas para calcular automáticamente los pagos (RF-15). Puede dejar en 0 las que no apliquen.</span></div>
+
+    <div class="col-md-4">
+        <label asp-for="TarifaJornada" class="form-label"></label>
+        <input asp-for="TarifaJornada" class="form-control" type="number" step="0.01" min="0" />
+        <span asp-validation-for="TarifaJornada" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="TarifaHora" class="form-label"></label>
+        <input asp-for="TarifaHora" class="form-control" type="number" step="0.01" min="0" />
+        <span asp-validation-for="TarifaHora" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="TarifaCajuela" class="form-label"></label>
+        <input asp-for="TarifaCajuela" class="form-control" type="number" step="0.01" min="0" />
+        <span asp-validation-for="TarifaCajuela" class="text-danger small"></span>
+    </div>
+</div>
